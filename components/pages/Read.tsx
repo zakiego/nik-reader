@@ -21,7 +21,6 @@ export const Read = () => {
     watch,
     formState: { isValid },
     handleSubmit,
-    resetField,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -76,15 +75,18 @@ export const Read = () => {
           </button>
         </form>
       </div>
+
       <div className="mt-16 bg-hitam-900 text-white px-7 py-6 rounded-md">
         <div className="font-bold text-xl flex justify-between">
           <div>Detail</div>
-          <button
-            onClick={() => readNIK.reset()}
-            className="text-white/60 hover:text-red-500"
-          >
-            <XCircleIcon className="h-6 w-6" />
-          </button>
+          {readNIK.data && (
+            <button
+              onClick={() => readNIK.reset()}
+              className="text-white/60 hover:text-red-500"
+            >
+              <XCircleIcon className="h-6 w-6" />
+            </button>
+          )}
         </div>
 
         <div className="mt-7 font-medium space-y-5">
@@ -94,7 +96,7 @@ export const Read = () => {
               {data?.provinsi}
             </NullGuard>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between space-x-4">
             <div className="w-7/12">
               <div className="text-hitam-100 text-sm">Kabupaten</div>
               <NullGuard isLoading={readNIK.isLoading}>
@@ -109,7 +111,7 @@ export const Read = () => {
             </div>
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between space-x-4">
             <div className="w-7/12">
               <div className="text-hitam-100 text-sm">Jenis Kelamin</div>
               <NullGuard isLoading={readNIK.isLoading}>
@@ -144,7 +146,7 @@ const NullGuard = ({
   children: any;
 }) => {
   if (isLoading) {
-    return <div className="animate-pulse bg-gray-400 w-48 h-6 rounded-sm" />;
+    return <div className="animate-pulse bg-gray-400 h-6 rounded-sm w-full" />;
   }
 
   if (children === null) {
