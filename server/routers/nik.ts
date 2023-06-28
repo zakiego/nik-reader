@@ -17,7 +17,7 @@ export const nikRouter = createTRPCRouter({
         nik: z.string().min(16).max(16),
       }),
     )
-    .mutation(({ input }) => {
+    .mutation(async ({ input }) => {
       const { nik } = input;
 
       const { idProv, idKab, idKec, idGender, idBirthDate, idUniqueId } =
@@ -37,8 +37,6 @@ export const nikRouter = createTRPCRouter({
         birthDate: birthDate,
         uniqueId: idUniqueId,
       };
-
-      console.log(data);
 
       return data;
     }),

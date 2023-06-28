@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { match } from "ts-pattern";
 import { trpc } from "~/utils/trpc";
+import { XCircleIcon } from "@heroicons/react/outline";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type FormValues = {
   nik: string;
@@ -19,6 +21,7 @@ export const Read = () => {
     watch,
     formState: { isValid },
     handleSubmit,
+    resetField,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -45,6 +48,7 @@ export const Read = () => {
         <form onSubmit={onSubmit} className="flex flex-col">
           <input
             maxLength={16}
+            readOnly={readNIK.isLoading}
             className={`
           ${match(inputLength)
             .with(16, () => "border-green-600")
@@ -57,54 +61,74 @@ export const Read = () => {
             {...register("nik")}
           />
           <button
-            disabled={!isValid}
-            className={`w-full bg-green-600 disabled:bg-gray-300 mt-4 hover:bg-green-800 text-white px-3 py-1 shadow-lg rounded-md`}
+            disabled={!isValid || readNIK.isLoading}
+            className={`w-full bg-green-600 text-white mt-4 px-3 py-1 shadow-lg rounded-md flex items-center gap-x-2 transition-all
+            justify-center ${
+              readNIK.isLoading
+                ? "cursor-not-allowed"
+                : " hover:bg-green-800 disabled:bg-gray-300"
+            }`}
           >
-            Baca
+            {readNIK.isLoading && (
+              <AiOutlineLoading3Quarters className="animate-spin bg-red" />
+            )}
+            {readNIK.isLoading ? "Processing..." : "Baca"}
           </button>
         </form>
       </div>
       <div className="mt-16 bg-hitam-900 text-white px-7 py-6 rounded-md">
         <div className="font-bold text-xl flex justify-between">
           <div>Detail</div>
-          {/* <button
-            onClick={() => resetField("nik")}
+          <button
+            onClick={() => readNIK.reset()}
             className="text-white/60 hover:text-red-500"
           >
             <XCircleIcon className="h-6 w-6" />
-          </button> */}
+          </button>
         </div>
 
         <div className="mt-7 font-medium space-y-5">
           <div className="">
             <div className="text-hitam-100 text-sm">Provinsi</div>
-            <div>{data?.provinsi}</div>
+            <NullGuard isLoading={readNIK.isLoading}>
+              {data?.provinsi}
+            </NullGuard>
           </div>
           <div className="flex justify-between">
             <div className="w-7/12">
               <div className="text-hitam-100 text-sm">Kabupaten</div>
-              <div>{data?.kabupaten}</div>
+              <NullGuard isLoading={readNIK.isLoading}>
+                {data?.kabupaten}
+              </NullGuard>
             </div>
             <div className="w-5/12">
               <div className="text-hitam-100 text-sm">Kecamatan</div>
-              <div>{data?.kecamatan}</div>
+              <NullGuard isLoading={readNIK.isLoading}>
+                {data?.kecamatan}
+              </NullGuard>
             </div>
           </div>
 
           <div className="flex justify-between">
             <div className="w-7/12">
               <div className="text-hitam-100 text-sm">Jenis Kelamin</div>
-              <div>{data?.gender}</div>
+              <NullGuard isLoading={readNIK.isLoading}>
+                {data?.gender}
+              </NullGuard>
             </div>
             <div className="w-5/12">
               <div className="text-hitam-100 text-sm">Tanggal Lahir</div>
-              <div>{data?.birthDate}</div>
+              <NullGuard isLoading={readNIK.isLoading}>
+                {data?.birthDate}
+              </NullGuard>
             </div>
           </div>
 
           <div className="">
             <div className="text-hitam-100 text-sm">ID Unik</div>
-            <div>{data?.uniqueId}</div>
+            <NullGuard isLoading={readNIK.isLoading}>
+              {data?.uniqueId}
+            </NullGuard>
           </div>
         </div>
       </div>
@@ -112,21 +136,24 @@ export const Read = () => {
   );
 };
 
-const RemoveIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  );
+const NullGuard = ({
+  isLoading,
+  children,
+}: {
+  isLoading: boolean;
+  children: any;
+}) => {
+  if (isLoading) {
+    return <div className="animate-pulse bg-gray-400 w-48 h-6 rounded-sm" />;
+  }
+
+  if (children === null) {
+    return <p className="text-red-500">ERROR</p>;
+  }
+
+  if (children === undefined) {
+    return <p className="text-white">-</p>;
+  }
+
+  return <p>{children}</p>;
 };
