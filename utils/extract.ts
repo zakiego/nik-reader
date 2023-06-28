@@ -62,9 +62,13 @@ export const getBirthDate = ({
     const rawDay = id.substring(0, 2);
     const day = parseInt(rawDay) > 40 ? parseInt(rawDay) - 40 : rawDay;
     const month = id.substring(2, 4);
-    const year = id.substring(4, 6);
+    // TODO: im not sure about this to hanle 2 digit year
+    const year =
+      parseInt(id.substring(4, 6)) < 22
+        ? `20${id.substring(4, 6)}`
+        : `19${id.substring(4, 6)}`;
 
-    const date = parse(`${day}/${month}/${year}`, "dd/MM/yy", new Date());
+    const date = parse(`${day}/${month}/${year}`, "dd/MM/yyyy", new Date());
 
     return format(date, "dd/MM/yyyy");
   } catch (error) {
