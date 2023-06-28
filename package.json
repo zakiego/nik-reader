@@ -7,11 +7,22 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@heroicons/react": "^2.0.18",
+    "@heroicons/react": "^1",
+    "@hookform/resolvers": "^3.1.1",
     "@supabase/supabase-js": "^2.26.0",
+    "@tanstack/react-query": "^4.29.19",
+    "@trpc/client": "^10.32.0",
+    "@trpc/next": "^10.32.0",
+    "@trpc/react-query": "^10.32.0",
+    "@trpc/server": "^10.32.0",
+    "date-fns": "^2.30.0",
     "next": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.0",
+    "superjson": "^1.12.4",
+    "ts-pattern": "^5.0.1",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",

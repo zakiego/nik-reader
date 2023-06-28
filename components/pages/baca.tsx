@@ -81,7 +81,7 @@ const Baca = () => {
                 : len < 16 && len > 1
                 ? "border-red-400"
                 : "border-garis"
-            } text-xl text-center  mt-2 space-x-1 border-b-2  outline-none`}
+            }  text-xl text-center mt-2 space-x-1 border-b-2 outline-none`}
           />
           <button
             disabled={len == 16 ? false : true}
