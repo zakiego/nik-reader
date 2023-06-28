@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { match } from "ts-pattern";
 import { trpc } from "~/utils/trpc";
-import { XCircleIcon } from "@heroicons/react/outline";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { XCircleIcon } from "@heroicons/react/20/solid";
 
 type FormValues = {
   nik: string;
