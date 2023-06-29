@@ -49,13 +49,25 @@ const Login = () => {
   return (
     <>
       <title>Login</title>
-      <div className="flex min-h-screen flex-1 bg-gray-900">
+      <div className="flex min-h-screen flex-1 bg-gray-950">
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
-            <div>
-              <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-white">
+            <div className="text-white space-y-3">
+              <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight ">
                 Sign in for exclusive access
               </h2>
+              <p>
+                Ping me at{" "}
+                <a
+                  href="https://twitter.com/zakiego"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-500"
+                >
+                  @zakiego
+                </a>{" "}
+                for the secret code 🤣
+              </p>
             </div>
 
             <div className="mt-10">
