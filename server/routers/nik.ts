@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "~/server/trpc";
 import {
   extractIdsFromNIK,
   getBirthDate,
@@ -11,7 +15,7 @@ import {
 } from "~/utils/extract";
 
 export const nikRouter = createTRPCRouter({
-  read: publicProcedure
+  read: privateProcedure
     .input(
       z.object({
         nik: z.string().min(16).max(16),

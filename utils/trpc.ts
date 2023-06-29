@@ -2,6 +2,7 @@ import { httpBatchLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { type AppRouter } from "~/server/app";
 import superjson from "superjson";
+import { httpLink } from "@trpc/client";
 
 function getBaseUrl() {
   if (typeof window !== "undefined")
