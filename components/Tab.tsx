@@ -22,7 +22,7 @@ export const Tab: FC<Props> = ({ selectedTab, setSelectedTab }) => {
             }
 						w-full transition-all py-1 text-lg rounded-2xl hover:text-hitam-900/90 hover:font-bold hover:bg-white hover:shadow-lg `}
           >
-            {tab === "read" ? "Baca" : "Prediksi"}
+            {tab === "read" ? "Baca" : "Generate"}
           </button>
         </div>
       ))}

@@ -11,7 +11,7 @@ export default function Home() {
 
   const title = match(selectedTab)
     .with("read", () => "Baca NIK")
-    .with("predict", () => "Prediksi NIK")
+    .with("predict", () => "Generate NIK")
     .otherwise(() => "NIK");
 
   return (
