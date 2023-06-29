@@ -17,6 +17,7 @@
     "@trpc/react-query": "^10.32.0",
     "@trpc/server": "^10.32.0",
     "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,6 +28,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.195",
     "@types/react": "^18.2.14",
     "autoprefixer": "^10.4.14",
     "eslint": "8.43.0",
