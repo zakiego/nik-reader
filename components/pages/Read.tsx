@@ -23,9 +23,6 @@ export const Read = () => {
     handleSubmit,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      nik: "6301001010010110",
-    },
   });
 
   const inputLength = watch("nik")?.length || 0;
@@ -52,7 +49,7 @@ export const Read = () => {
           ${match(inputLength)
             .with(16, () => "border-green-600")
             .when(
-              (length) => length < 16 && length > 1,
+              (length) => length < 16 && length >= 1,
               () => "border-red-400",
             )
             .otherwise(() => "border-garis")}
