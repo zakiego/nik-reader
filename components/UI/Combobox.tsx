@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox as ComboboxHeadless } from "@headlessui/react";
-import { Control, useController } from "react-hook-form";
+import { Control, useController, useWatch } from "react-hook-form";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -28,7 +28,6 @@ export const Combobox: FC<Props> = ({
   isDisabled,
 }) => {
   const [query, setQuery] = useState("");
-  const [selectedPerson, setSelectedPerson] = useState(null);
 
   const filteredOptions =
     query === ""
@@ -42,18 +41,23 @@ export const Combobox: FC<Props> = ({
     control,
   });
 
-  const { onBlur, onChange, ref, value, ...rest } = field;
+  const { onChange, value, ...rest } = field;
+
+  const watchValue = useWatch({
+    control,
+    name,
+  });
 
   return (
     <ComboboxHeadless
       as="div"
-      value={selectedPerson}
       onChange={(value) => {
-        setSelectedPerson(value);
         onChange(value);
       }}
       className={className}
       disabled={isDisabled}
+      // value={watchValue}
+      value={value}
     >
       <ComboboxHeadless.Label className="block text-sm font-medium leading-6 text-gray-900">
         {label}
@@ -64,7 +68,9 @@ export const Combobox: FC<Props> = ({
           onChange={(event) => {
             setQuery(event.target.value);
           }}
-          displayValue={(person: Props["options"][number]) => person?.label}
+          displayValue={(value: Props["options"][number]) => value?.label}
+          id={name}
+          name={name}
         />
         <ComboboxHeadless.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
           <ChevronUpDownIcon
