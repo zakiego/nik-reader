@@ -5,14 +5,7 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/trpc";
-import {
-  extractIdsFromNIK,
-  getBirthDate,
-  getGender,
-  getKabupaten,
-  getKecamatan,
-  getProvinsi,
-} from "~/utils/extract";
+import { extractDataFromNIK } from "~/utils/read";
 
 export const nikRouter = createTRPCRouter({
   read: privateProcedure
@@ -24,24 +17,6 @@ export const nikRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { nik } = input;
 
-      const { idProv, idKab, idKec, idGender, idBirthDate, idUniqueId } =
-        extractIdsFromNIK(nik);
-
-      const prov = getProvinsi({ idProv });
-      const kab = getKabupaten({ idKab });
-      const kec = getKecamatan({ idKec });
-      const gender = getGender({ idGender });
-      const birthDate = getBirthDate({ idBirthDate });
-
-      const data = {
-        provinsi: prov,
-        kabupaten: kab,
-        kecamatan: kec,
-        gender: gender,
-        birthDate: birthDate,
-        uniqueId: idUniqueId,
-      };
-
-      return data;
+      return extractDataFromNIK(nik);
     }),
 });
