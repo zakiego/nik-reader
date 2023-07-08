@@ -68,6 +68,10 @@ const Login = () => {
                 </a>{" "}
                 for the secret code 🤣
               </p>
+              <p>
+                And tell me why {`you're`} interested in trying it. Please note
+                that this project is limited due to its potential for abuse.
+              </p>
             </div>
 
             <div className="mt-10">
