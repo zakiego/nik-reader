@@ -27,6 +27,8 @@ export const authOptions: AuthOptions = {
         secretCode: { label: "SecretCode", type: "password" },
       },
       async authorize(credentials) {
+        console.log("Trying to login with credentials: ", credentials);
+
         const user = {
           id: "1",
           name: "SUPERADMIN",
