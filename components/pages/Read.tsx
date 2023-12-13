@@ -21,6 +21,8 @@ export const Read = () => {
 		watch,
 		formState: { isValid },
 		handleSubmit,
+		setValue: formSetValue,
+		trigger: formTrigger,
 	} = useForm<FormValues>({
 		resolver: zodResolver(schema),
 	});
@@ -54,9 +56,13 @@ export const Read = () => {
 						)
 						.otherwise(() => "border-garis")}
             w-full text-xl text-center mt-2 space-x-1 border-b-2 outline-none`}
-						{...register("nik", {
-							required: true,
-						})}
+						onChange={(e) => {
+							// get only numbers
+							const value = e.target.value.replace(/\D/g, "");
+							e.target.value = value;
+							formSetValue("nik", value);
+							formTrigger("nik");
+						}}
 					/>
 					<button
 						disabled={!isValid || readNIK.isLoading}
