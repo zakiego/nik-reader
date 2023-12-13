@@ -5,7 +5,7 @@ import { extractDataFromNIK } from "~/utils/read";
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { nik } = req.body;
 
-  const validate = z.string().min(16).max(16);
+  const validate = z.coerce.string().length(16);
 
   const isValid = validate.safeParse(nik);
 

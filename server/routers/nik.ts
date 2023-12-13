@@ -11,7 +11,7 @@ export const nikRouter = createTRPCRouter({
   read: publicProcedure
     .input(
       z.object({
-        nik: z.string().length(16),
+        nik: z.coerce.string().length(16),
       }),
     )
     .mutation(async ({ input }) => {
