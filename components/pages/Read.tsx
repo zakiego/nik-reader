@@ -12,7 +12,7 @@ type FormValues = {
 };
 
 const schema = z.object({
-  nik: z.string().min(16).max(16),
+  nik: z.string().length(16),
 });
 
 export const Read = () => {
