@@ -8,7 +8,7 @@ import {
 import { extractDataFromNIK } from "~/utils/read";
 
 export const nikRouter = createTRPCRouter({
-  read: privateProcedure
+  read: publicProcedure
     .input(
       z.object({
         nik: z.string().min(16).max(16),

@@ -7,7 +7,7 @@ export const Navbar = () => {
         <div className="h-5 w-5 bg-hitam-900 rounded-md" />
         <div className="text-2xl font-black">NIK</div>
       </div>
-      <Logout />
+      {/* <Logout /> */}
     </div>
   );
 };
