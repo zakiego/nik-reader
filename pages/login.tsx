@@ -1,24 +1,16 @@
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { getServerSession } from "next-auth";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { type FC, useState } from "react";
 import { authOptions } from "~/pages/api/auth/[...nextauth]";
 
 export const getServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
   return {
-    props: {},
+    redirect: {
+      destination: "/",
+      permanent: true,
+    },
   };
 };
 
