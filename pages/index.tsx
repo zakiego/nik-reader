@@ -4,7 +4,7 @@ import { Navbar } from "~/components/Navbar";
 import { Tab } from "~/components/Tab";
 import { Predict } from "~/components/pages/Predict";
 import { Read } from "~/components/pages/Read";
-import { Feature } from "~/lib/const";
+import type { Feature } from "~/lib/const";
 
 export default function Home() {
   const [selectedTab, setSelectedTab] = useState<Feature>("read");
