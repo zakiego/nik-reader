@@ -23,7 +23,7 @@ const Login = () => {
     e.preventDefault();
     const login = await signIn("credentials", {
       secretCode: secretCode,
-      callbackUrl: `/`,
+      callbackUrl: "/",
       redirect: false,
     });
 
