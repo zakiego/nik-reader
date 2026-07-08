@@ -1,21 +1,17 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { nikSchema } from "~/lib/nik-schema";
 import { extractDataFromNIK } from "~/utils/read";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { nik } = req.body;
+  const parsed = nikSchema.safeParse(req.body);
 
-  const validate = z.coerce.string().length(16);
-
-  const isValid = validate.safeParse(nik);
-
-  if (!isValid.success) {
+  if (!parsed.success) {
     return res
       .status(400)
       .json({ message: "NIK is not valid, character length must be 16" });
   }
 
-  const data = extractDataFromNIK(nik);
+  const data = extractDataFromNIK(parsed.data.nik);
 
-  res.status(200).json(data);
+  return res.status(200).json(data);
 }

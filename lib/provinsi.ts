@@ -1,4 +1,4 @@
-export const PROVINSI = [
+export const PROVINSI: readonly { idProv: string; name: string }[] = [
   {
     idProv: "11",
     name: "ACEH",

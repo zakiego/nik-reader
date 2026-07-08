@@ -28,3 +28,5 @@ export const extractDataFromNIK = (nik: string) => {
 
   return data;
 };
+
+export type ExtractedNik = ReturnType<typeof extractDataFromNIK>;

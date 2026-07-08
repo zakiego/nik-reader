@@ -1,15 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Combobox } from "~/components/UI";
-import { PROVINSI } from "~/lib/provinsi";
-import { KABUPATEN } from "~/lib/kabupaten";
-import { KECAMATAN } from "~/lib/kecamatan";
-import { GENDER } from "~/lib/gender";
-import { Input } from "~/components/UI/Input";
-import { useForm, useWatch } from "react-hook-form";
-import { P, match } from "ts-pattern";
+import { split } from "lodash";
 import { useEffect } from "react";
-import { chunk, split } from "lodash";
+import { useForm, useWatch } from "react-hook-form";
+import { match } from "ts-pattern";
+import { Combobox } from "~/components/UI";
+import { Input } from "~/components/UI/Input";
+import { GENDER } from "~/lib/gender";
 import { chunkTwoChars } from "~/utils/string";
+import { trpc } from "~/utils/trpc";
 
 type ComboboxOption = {
   value: string;
@@ -25,12 +22,26 @@ interface FormValues {
 }
 
 export const Predict = () => {
-  const { register, control, setValue, watch, resetField } =
-    useForm<FormValues>({});
+  const { register, control, setValue, watch } = useForm<FormValues>({});
 
   const watchValues = useWatch({
     control,
   });
+
+  // Region options are fetched on demand from the server instead of bundling
+  // the full datasets into the client. Each level is enabled only once its
+  // parent has been selected, so the cascade fetches the minimum needed.
+  const provinsiQuery = trpc.region.provinsi.useQuery();
+
+  const kabupatenQuery = trpc.region.kabupaten.useQuery(
+    { idProv: watchValues.provinsi?.value ?? "" },
+    { enabled: !!watchValues.provinsi?.value },
+  );
+
+  const kecamatanQuery = trpc.region.kecamatan.useQuery(
+    { idKab: watchValues.kabupaten?.value ?? "" },
+    { enabled: !!watchValues.kabupaten?.value },
+  );
 
   const createNIK = () => {
     const regionalCode = match(watchValues)
@@ -57,7 +68,7 @@ export const Predict = () => {
 
     const birthDate = match(watchValues)
       .when(
-        (v) => v.birthDate && v.gender.value === "P",
+        (v) => v.birthDate && v.gender?.value === "P",
         (v) => {
           const splitDate = split(v.birthDate, "-");
           const addForty = (parseInt(splitDate[2]) + 40).toString();
@@ -85,14 +96,17 @@ export const Predict = () => {
   const watchProvinsi = watch("provinsi");
   const watchKabupaten = watch("kabupaten");
 
+  // Reset the dependent selections whenever the parent region changes.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: watchProvinsi is the intended trigger, not a value read inside the effect
   useEffect(() => {
     setValue("kabupaten", null);
     setValue("kecamatan", null);
-  }, [watchProvinsi]); // only re-run the effect if provinsi changes
+  }, [watchProvinsi, setValue]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: watchKabupaten is the intended trigger, not a value read inside the effect
   useEffect(() => {
     setValue("kecamatan", null);
-  }, [watchKabupaten]); // only re-run the effect if kabupaten changes
+  }, [watchKabupaten, setValue]);
 
   return (
     <div className="mt-10">
@@ -104,15 +118,10 @@ export const Predict = () => {
         <div className="mt-2 text-white/50 text-xs italic">
           *4 digit terakhir adalah angka gaib yang tidak bisa ditebak
         </div>
-
-        {/* <p className="text-white">{JSON.stringify(watchValues)}</p> */}
       </div>
       <div className="mt-10 space-y-4">
         <Combobox
-          options={PROVINSI.map((prov) => ({
-            value: prov.idProv,
-            label: prov.name,
-          }))}
+          options={provinsiQuery.data ?? []}
           label="Provinsi"
           name="provinsi"
           control={control}
@@ -120,12 +129,7 @@ export const Predict = () => {
 
         <div className="sm:flex sm:space-x-4 space-y-4 sm:space-y-0">
           <Combobox
-            options={KABUPATEN.filter(
-              (kab) => kab.idProv === watchValues.provinsi?.value,
-            ).map((kab) => ({
-              value: kab.idKab,
-              label: kab.name,
-            }))}
+            options={kabupatenQuery.data ?? []}
             label="Kabupaten/Kota"
             className="w-full sm:w-[50%]"
             name="kabupaten"
@@ -134,12 +138,7 @@ export const Predict = () => {
           />
 
           <Combobox
-            options={KECAMATAN.filter(
-              (kec) => kec.idKab === watchValues.kabupaten?.value,
-            ).map((kec) => ({
-              value: kec.idKec,
-              label: kec.name.toUpperCase(),
-            }))}
+            options={kecamatanQuery.data ?? []}
             label="Kecamatan"
             className="w-full sm:w-[50%]"
             name="kecamatan"

@@ -1,4 +1,8 @@
-export const KECAMATAN = [
+export const KECAMATAN: readonly {
+  idKec: string;
+  idKab: string;
+  name: string;
+}[] = [
   {
     idKec: "110101",
     idKab: "1101",

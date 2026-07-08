@@ -1,8 +1,6 @@
-import { z } from "zod";
-import { KECAMATAN } from "~/lib/kecamatan";
 import { format, parse } from "date-fns";
-import { PROVINSI } from "~/lib/provinsi";
-import { KABUPATEN } from "~/lib/kabupaten";
+import { z } from "zod";
+import { findKabupaten, findKecamatan, findProvinsi } from "~/lib/region";
 
 export function extractIdsFromNIK(NIK: string) {
   const idProv = NIK.substring(0, 2);
@@ -23,18 +21,15 @@ export function extractIdsFromNIK(NIK: string) {
 }
 
 export const getProvinsi = ({ idProv }: { idProv: string }) => {
-  const prov = PROVINSI.find((p) => p.idProv === idProv);
-  return prov?.name || null;
+  return findProvinsi(idProv)?.name ?? null;
 };
 
 export const getKabupaten = ({ idKab }: { idKab: string }) => {
-  const kab = KABUPATEN.find((k) => k.idKab === idKab);
-  return kab?.name || null;
+  return findKabupaten(idKab)?.name ?? null;
 };
 
 export const getKecamatan = ({ idKec }: { idKec: string }) => {
-  const kec = KECAMATAN.find((k) => k.idKec === idKec);
-  return kec?.name?.toUpperCase() || null;
+  return findKecamatan(idKec)?.name?.toUpperCase() ?? null;
 };
 
 export const getGender = ({ idGender }: { idGender: string | number }) => {

@@ -1,4 +1,8 @@
-export const KABUPATEN = [
+export const KABUPATEN: readonly {
+  idKab: string;
+  idProv: string;
+  name: string;
+}[] = [
   {
     idKab: "1101",
     idProv: "11",
