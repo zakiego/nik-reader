@@ -1,3 +1,7 @@
+import {
+  InformationCircleIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 import { split } from "lodash";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -109,68 +113,117 @@ export const Predict = () => {
   }, [watchKabupaten, setValue]);
 
   return (
-    <div className="mt-10">
-      <div className="bg-hitam-900 px-7 py-6 rounded-md">
-        <div className="font-medium text-white/70 text-xl">NIK</div>
-        <div className="mt-3 font-medium text-white text-3xl">
-          {createNIK()}
-        </div>
-        <div className="mt-2 text-white/50 text-xs italic">
-          *4 digit terakhir adalah angka gaib yang tidak bisa ditebak
-        </div>
-      </div>
-      <div className="mt-10 space-y-4">
-        <Combobox
-          options={provinsiQuery.data ?? []}
-          label="Provinsi"
-          name="provinsi"
-          control={control}
-        />
-
-        <div className="sm:flex sm:space-x-4 space-y-4 sm:space-y-0">
-          <Combobox
-            options={kabupatenQuery.data ?? []}
-            label="Kabupaten/Kota"
-            className="w-full sm:w-[50%]"
-            name="kabupaten"
-            control={control}
-            isDisabled={!watchValues.provinsi}
-          />
-
-          <Combobox
-            options={kecamatanQuery.data ?? []}
-            label="Kecamatan"
-            className="w-full sm:w-[50%]"
-            name="kecamatan"
-            control={control}
-            isDisabled={!watchValues.kabupaten}
-          />
+    <div className="mt-8">
+      <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white shadow-panel ring-1 ring-white/10">
+        <div className="flex items-center gap-2 border-b border-white/5 px-6 py-4 sm:px-7">
+          <SparklesIcon className="h-5 w-5 text-slate-300" aria-hidden="true" />
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+            Pratinjau NIK
+          </h2>
         </div>
 
-        <div className="sm:flex sm:space-x-4 space-y-4 sm:space-y-0">
+        <div className="px-6 py-6 sm:px-7">
+          <div className="break-all text-2xl font-semibold tracking-tight sm:text-3xl">
+            <NikPreview value={createNIK()} />
+          </div>
+          <p className="mt-3 flex items-start gap-1.5 text-xs text-slate-400">
+            <InformationCircleIcon
+              className="mt-0.5 h-4 w-4 shrink-0 text-slate-500"
+              aria-hidden="true"
+            />
+            <span>
+              4 digit terakhir (
+              <span className="font-mono text-slate-300">xxxx</span>) adalah
+              angka gaib yang tidak bisa ditebak.
+            </span>
+          </p>
+        </div>
+      </section>
+
+      <div className="mt-8">
+        <h3 className="text-sm font-medium text-content">Lengkapi data</h3>
+        <p className="mt-1 text-xs text-muted">
+          NIK terbentuk otomatis dari pilihan di bawah.
+        </p>
+
+        <div className="mt-4 space-y-4">
           <Combobox
-            options={GENDER.map((g) => ({
-              value: g.value,
-              label: g.label.toUpperCase(),
-            }))}
-            label="Jenis Kelamin"
-            className="w-full sm:w-[50%]"
-            name="gender"
+            options={provinsiQuery.data ?? []}
+            label="Provinsi"
+            name="provinsi"
             control={control}
           />
 
-          <Input
-            label="Tanggal Lahir"
-            inputProps={{
-              type: "date",
-              ...register("birthDate"),
-            }}
-            containerProps={{
-              className: "w-full sm:w-[50%]",
-            }}
-          />
+          <div className="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
+            <Combobox
+              options={kabupatenQuery.data ?? []}
+              label="Kabupaten/Kota"
+              className="w-full sm:w-[50%]"
+              name="kabupaten"
+              control={control}
+              isDisabled={!watchValues.provinsi}
+            />
+
+            <Combobox
+              options={kecamatanQuery.data ?? []}
+              label="Kecamatan"
+              className="w-full sm:w-[50%]"
+              name="kecamatan"
+              control={control}
+              isDisabled={!watchValues.kabupaten}
+            />
+          </div>
+
+          <div className="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
+            <Combobox
+              options={GENDER.map((g) => ({
+                value: g.value,
+                label: g.label.toUpperCase(),
+              }))}
+              label="Jenis Kelamin"
+              className="w-full sm:w-[50%]"
+              name="gender"
+              control={control}
+            />
+
+            <Input
+              label="Tanggal Lahir"
+              inputProps={{
+                type: "date",
+                ...register("birthDate"),
+              }}
+              containerProps={{
+                className: "w-full sm:w-[50%]",
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
+  );
+};
+
+// Renders the generated NIK with known digits highlighted and the unknown
+// placeholder characters (* and x) dimmed, so the number reads like it is
+// progressively filling in as the user makes selections.
+const NikPreview = ({ value }: { value: string }) => {
+  // Pre-bake a stable id per position. The readout is fixed-length and never
+  // reorders, so a positional id is safe (and keeps keys off the map index).
+  const chars = value.split("").map((char, i) => ({ char, id: i }));
+
+  return (
+    <span className="tabular font-mono">
+      {chars.map(({ char, id }) => {
+        const isPlaceholder = char === "*" || char === "x" || char === "X";
+        return (
+          <span
+            key={id}
+            className={isPlaceholder ? "text-slate-600" : "text-white"}
+          >
+            {char}
+          </span>
+        );
+      })}
+    </span>
   );
 };

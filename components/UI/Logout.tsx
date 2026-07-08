@@ -5,7 +5,7 @@ export const Logout = () => {
     <button
       type="button"
       onClick={() => signOut()}
-      className="rounded bg-gray-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+      className="rounded-lg bg-surface-2 px-3 py-1.5 text-xs font-semibold text-content shadow-sm transition-colors hover:bg-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
     >
       Logout
     </button>

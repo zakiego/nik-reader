@@ -1,13 +1,34 @@
-import { Logout } from "~/components/UI/Logout";
+import { GlobeAltIcon } from "@heroicons/react/24/outline";
+import { IdentificationIcon } from "@heroicons/react/24/solid";
+import { SITE } from "~/lib/site";
 
 export const Navbar = () => {
   return (
-    <div className="flex justify-between">
-      <div className="flex items-center space-x-1">
-        <div className="h-5 w-5 bg-hitam-900 rounded-md" />
-        <div className="text-2xl font-black">NIK</div>
+    <header className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary-hover text-primary-fg shadow-sm ring-1 ring-black/5">
+          <IdentificationIcon className="h-6 w-6" aria-hidden="true" />
+        </div>
+        <div className="leading-tight">
+          <div className="text-lg font-bold tracking-tight text-content">
+            NIK
+          </div>
+          <div className="text-xs font-medium text-muted">
+            Reader &amp; Generator
+          </div>
+        </div>
       </div>
-      {/* <Logout /> */}
-    </div>
+
+      <a
+        href={SITE.authorUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Kunjungi zakiego.com"
+        title="zakiego.com"
+        className="grid h-9 w-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+      >
+        <GlobeAltIcon className="h-5 w-5" aria-hidden="true" />
+      </a>
+    </header>
   );
 };

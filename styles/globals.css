@@ -1,5 +1,52 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Light theme only. Slate neutrals + hitam primary (channels: "R G B") */
+  --color-bg: 248 250 252; /* slate-50 */
+  --color-surface: 255 255 255; /* white */
+  --color-surface-2: 241 245 249; /* slate-100 */
+  --color-border: 226 232 240; /* slate-200 */
+  --color-text: 15 23 42; /* slate-900 */
+  --color-muted: 100 116 139; /* slate-500 */
+  --color-faint: 148 163 184; /* slate-400 */
+  --color-primary: 14 17 17; /* hitam #0E1111 */
+  --color-primary-hover: 39 39 42; /* zinc-800 (subtle lift on hover) */
+  --color-primary-fg: 255 255 255;
+  --color-success: 21 128 61; /* green-700 */
+  --color-danger: 220 38 38; /* red-600 */
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg text-content antialiased;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background-color: rgb(var(--color-primary) / 0.22);
+  }
+}
+
+@layer utilities {
+  /* Tabular figures keep the 16-digit NIK readouts from shifting width */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

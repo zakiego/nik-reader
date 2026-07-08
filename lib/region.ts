@@ -8,7 +8,7 @@ import { PROVINSI } from "~/lib/provinsi";
  *
  * This module imports the large region datasets (~565 KB) and is intended to be
  * used *server-side only* (tRPC routers / API routes). Do not import it from
- * client components — that would ship the full datasets to the browser.
+ * client components, since that would ship the full datasets to the browser.
  *
  * Lookups are backed by maps built once at module load, so both the point
  * lookups (`find*`) and the cascading lists (`list*`) are O(1).

@@ -19,13 +19,13 @@ export const Input: FC<Props> = (props) => {
 
   return (
     <div {...containerProps}>
-      <p className="block text-sm font-medium leading-6 text-gray-900">
+      <label className="block text-sm font-medium text-content">
         {label}
-      </p>
-      <input
-        className="mt-2 text-sm  block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
-        {...inputProps}
-      />
+        <input
+          className="mt-2 block w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-content shadow-sm outline-none transition-colors [color-scheme:light] placeholder:text-faint focus:border-primary focus:ring-2 focus:ring-primary/25"
+          {...inputProps}
+        />
+      </label>
     </div>
   );
 };
