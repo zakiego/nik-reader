@@ -1,0 +1,20 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+# `.env` is gitignored but required (Supabase URL/anon key + SECRET_CODE for auth).
+# Copy it into every new workspace. Mirrors Conductor's default `.env*` behavior,
+# kept explicit here so teammates know an env file is expected.
+file_include_globs = ".env*"
+
+[scripts]
+# node_modules and .next are gitignored, so install dependencies per workspace.
+setup = "pnpm install"
+# Supabase is remote and each workspace gets its own CONDUCTOR_PORT, so multiple
+# workspaces can run their dev servers at the same time.
+run_mode = "concurrent"
+
+[scripts.run.dev]
+# PORT drives both `next dev` (which honors it) and getBaseUrl() in utils/trpc.ts,
+# keeping the dev server and server-side tRPC calls on the same workspace port.
+command = "PORT=$CONDUCTOR_PORT pnpm dev"
+default = true
+icon = "play"
