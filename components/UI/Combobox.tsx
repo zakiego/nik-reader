@@ -1,7 +1,7 @@
-import { FC, useState } from "react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox as ComboboxHeadless } from "@headlessui/react";
-import { Control, useController, useWatch } from "react-hook-form";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { FC, useState } from "react";
+import { Control, useController } from "react-hook-form";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -15,6 +15,7 @@ interface Props {
   }[];
   className?: string;
   name: string;
+  // biome-ignore lint/suspicious/noExplicitAny: generic wrapper accepts a control for any form shape
   control: Control<any, any>;
   isDisabled?: boolean;
 }
@@ -41,12 +42,7 @@ export const Combobox: FC<Props> = ({
     control,
   });
 
-  const { onChange, value, ...rest } = field;
-
-  const watchValue = useWatch({
-    control,
-    name,
-  });
+  const { onChange, value } = field;
 
   return (
     <ComboboxHeadless
@@ -56,7 +52,6 @@ export const Combobox: FC<Props> = ({
       }}
       className={className}
       disabled={isDisabled}
-      // value={watchValue}
       value={value}
     >
       <ComboboxHeadless.Label className="block text-sm font-medium leading-6 text-gray-900">
@@ -64,7 +59,7 @@ export const Combobox: FC<Props> = ({
       </ComboboxHeadless.Label>
       <div className="relative mt-2">
         <ComboboxHeadless.Input
-          className={`disabled:cursor-not-allowed disabled:opacity-50 text-sm w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6`}
+          className="disabled:cursor-not-allowed disabled:opacity-50 text-sm w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
           onChange={(event) => {
             setQuery(event.target.value);
           }}
@@ -107,7 +102,7 @@ export const Combobox: FC<Props> = ({
                       <span
                         className={classNames(
                           "absolute inset-y-0 right-0 flex items-center pr-4",
-                          active ? "text-white" : "text-gray-600-600",
+                          active ? "text-white" : "text-gray-600",
                         )}
                       >
                         <CheckIcon className="h-5 w-5" aria-hidden="true" />

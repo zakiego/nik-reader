@@ -12,6 +12,7 @@ export const Tab: FC<Props> = ({ selectedTab, setSelectedTab }) => {
       {Feature.map((tab) => (
         <div key={tab} className="py-1.5 px-1.5 w-1/2 text-center">
           <button
+            type="button"
             onClick={() => {
               setSelectedTab(tab);
             }}
