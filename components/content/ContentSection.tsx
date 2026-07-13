@@ -17,10 +17,13 @@ export const ContentSection = ({
 }) => {
   return (
     <section className={className} aria-labelledby={id}>
-      <h2 id={id} className="text-lg font-semibold tracking-tight text-content">
+      <h2
+        id={id}
+        className="text-balance text-lg font-semibold tracking-tight text-content sm:text-xl"
+      >
         {title}
       </h2>
-      <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted">
+      <div className="mt-4 max-w-[62ch] space-y-4 text-[15px] leading-relaxed text-muted">
         {children}
       </div>
     </section>

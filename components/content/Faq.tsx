@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import type { FaqItem } from "~/lib/structured-data";
 
 /**
@@ -14,24 +14,26 @@ export const Faq = ({
   title?: string;
 }) => {
   return (
-    <section className="mt-12" aria-labelledby="faq-heading">
+    <section className="mt-16" aria-labelledby="faq-heading">
       <h2
         id="faq-heading"
-        className="text-lg font-semibold tracking-tight text-content"
+        className="text-balance text-lg font-semibold tracking-tight text-content sm:text-xl"
       >
         {title}
       </h2>
-      <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface">
+      <div className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
         {items.map((item) => (
-          <details key={item.q} className="group px-4 sm:px-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-4 text-sm font-medium text-content transition-colors hover:text-primary [&::-webkit-details-marker]:hidden">
+          <details key={item.q} className="group">
+            <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-[15px] font-medium text-content transition-colors duration-150 ease-out hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:px-5 [&::-webkit-details-marker]:hidden">
               {item.q}
-              <ChevronDownIcon
-                className="h-4 w-4 shrink-0 text-faint transition-transform group-open:rotate-180"
+              <PlusIcon
+                className="h-4 w-4 shrink-0 text-faint transition-transform duration-200 ease-out group-open:rotate-45"
                 aria-hidden="true"
               />
             </summary>
-            <p className="pb-4 text-sm leading-relaxed text-muted">{item.a}</p>
+            <p className="max-w-[62ch] px-4 pb-4 text-sm leading-relaxed text-muted sm:px-5">
+              {item.a}
+            </p>
           </details>
         ))}
       </div>
