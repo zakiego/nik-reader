@@ -4,14 +4,23 @@ import { SITE } from "~/lib/site";
 interface Props {
   /** Page-specific title; site name is appended automatically. Omit for home. */
   title?: string;
+  /** Full <title> content used verbatim (overrides `title`). */
+  titleFull?: string;
   description?: string;
   /** Path portion of the canonical URL, e.g. "/" or "/login". */
   path?: string;
   noindex?: boolean;
 }
 
-export const Seo = ({ title, description, path = "/", noindex }: Props) => {
-  const pageTitle = title ? `${title} · ${SITE.name}` : SITE.title;
+export const Seo = ({
+  title,
+  titleFull,
+  description,
+  path = "/",
+  noindex,
+}: Props) => {
+  const pageTitle =
+    titleFull ?? (title ? `${title} · ${SITE.name}` : SITE.title);
   const desc = description ?? SITE.description;
   const url = `${SITE.url}${path}`;
   const ogImage = `${SITE.url}/og.png`;
