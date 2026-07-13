@@ -3,19 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* Light theme only. Slate neutrals + hitam primary (channels: "R G B") */
-  --color-bg: 248 250 252; /* slate-50 */
-  --color-surface: 255 255 255; /* white */
-  --color-surface-2: 241 245 249; /* slate-100 */
-  --color-border: 226 232 240; /* slate-200 */
-  --color-text: 15 23 42; /* slate-900 */
-  --color-muted: 100 116 139; /* slate-500 */
-  --color-faint: 148 163 184; /* slate-400 */
-  --color-primary: 14 17 17; /* hitam #0E1111 */
-  --color-primary-hover: 39 39 42; /* zinc-800 (subtle lift on hover) */
-  --color-primary-fg: 255 255 255;
-  --color-success: 21 128 61; /* green-700 */
-  --color-danger: 220 38 38; /* red-600 */
+  /* Light theme only. Slate neutrals + hitam primary.
+     Colors are OKLCH channels stored as "L C H" so Tailwind's /opacity
+     modifiers keep working (see tailwind.config.js). */
+  --color-bg: 0.984 0.003 247.858; /* slate-50 */
+  --color-surface: 1 0 0; /* white */
+  --color-surface-2: 0.968 0.007 247.896; /* slate-100 */
+  --color-border: 0.929 0.013 255.508; /* slate-200 */
+  --color-text: 0.208 0.042 265.755; /* slate-900 */
+  --color-muted: 0.554 0.046 257.417; /* slate-500 */
+  --color-faint: 0.704 0.04 256.788; /* slate-400 */
+  --color-primary: 0.185 0.004 196; /* hitam #0E1111 */
+  --color-primary-hover: 0.274 0.006 286.033; /* zinc-800 (subtle lift on hover) */
+  --color-primary-fg: 1 0 0; /* white */
+  --color-success: 0.527 0.154 150.069; /* green-700 */
+  --color-danger: 0.577 0.245 27.325; /* red-600 */
+
+  /* Motion tokens. One easing + duration scale so every transition and
+     entrance shares the same rhythm. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
 }
 
 @layer base {
@@ -26,10 +35,11 @@
   body {
     @apply bg-bg text-content antialiased;
     min-height: 100dvh;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background-color: rgb(var(--color-primary) / 0.22);
+    background-color: oklch(var(--color-primary) / 0.18);
   }
 }
 
@@ -38,6 +48,15 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+
+  /* text-wrap helpers (defined here so they work on Tailwind < 3.4) */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -45,8 +64,10 @@
   ::before,
   ::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }
