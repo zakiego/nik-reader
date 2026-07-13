@@ -1,11 +1,16 @@
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { IdentificationIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
 import { SITE } from "~/lib/site";
 
 export const Navbar = () => {
   return (
     <header className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
+      <Link
+        href="/"
+        className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        aria-label="NIK Reader beranda"
+      >
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary-hover text-primary-fg shadow-sm ring-1 ring-black/5">
           <IdentificationIcon className="h-6 w-6" aria-hidden="true" />
         </div>
@@ -17,7 +22,7 @@ export const Navbar = () => {
             Reader &amp; Generator
           </div>
         </div>
-      </div>
+      </Link>
 
       <a
         href={SITE.authorUrl}
