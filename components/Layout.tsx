@@ -7,8 +7,9 @@ import type { Crumb } from "~/lib/structured-data";
 
 /**
  * Shared page shell: navbar, optional breadcrumbs, page content, related-page
- * links, and footer. Every indexable page renders through this so the header,
- * internal linking, and footer stay identical across the site.
+ * links, and footer. Navigation to the other pages lives at the bottom (the
+ * related-page cards and the footer sitemap), keeping the top of each page,
+ * especially the home page, clean.
  */
 export const Layout = ({
   children,
@@ -21,7 +22,7 @@ export const Layout = ({
   breadcrumbs?: Crumb[];
 }) => {
   return (
-    <main className="mx-auto w-full max-w-xl px-4 py-10 sm:py-14">
+    <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
       <Navbar />
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} />
