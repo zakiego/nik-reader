@@ -65,15 +65,36 @@ export default function Home() {
 
       <Layout currentPath={meta.path}>
         <PageHero
+          kicker="Nomor Induk Kependudukan"
+          size="lg"
           title={meta.h1}
-          lead="Cek NIK online gratis. Masukkan 16 digit NIK KTP untuk membaca provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir, atau buat contoh NIK lewat tab Generate."
+          lead="Masukkan 16 digit NIK untuk membaca provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir. Contoh NIK juga dapat dibuat melalui tab Generate."
         />
 
         <div className="mt-8">
           <NikTool />
         </div>
 
-        <ContentSection title="Cara cek NIK online">
+        <ContentSection title="Arti 16 digit NIK">
+          <p>
+            Setiap NIK terdiri dari 16 digit yang tidak acak. Angka-angka itu
+            menyimpan kode wilayah, tanggal lahir, jenis kelamin, dan nomor urut
+            pendaftaran. Begini susunannya:
+          </p>
+          <NikAnatomy />
+          <p>
+            Penjelasan lengkap tiap bagian ada di panduan{" "}
+            <Link
+              href={ROUTES.guide.path}
+              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
+            >
+              cara membaca NIK
+            </Link>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Cara memeriksa NIK">
           <ol className="list-decimal space-y-2 pl-5 marker:font-medium marker:text-faint">
             <li>Buka tab Baca, lalu ketik 16 digit NIK pada kolom input.</li>
             <li>
@@ -96,26 +117,7 @@ export default function Home() {
           </p>
         </ContentSection>
 
-        <ContentSection title="Arti 16 digit NIK">
-          <p>
-            Setiap NIK terdiri dari 16 digit yang tidak acak. Angka-angka itu
-            menyimpan kode wilayah, tanggal lahir, jenis kelamin, dan nomor urut
-            pendaftaran. Begini susunannya:
-          </p>
-          <NikAnatomy />
-          <p>
-            Penjelasan lengkap tiap bagian ada di panduan{" "}
-            <Link
-              href={ROUTES.guide.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cara membaca NIK
-            </Link>
-            .
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Yang tidak bisa dicek dari NIK">
+        <ContentSection title="Informasi yang tidak ada di NIK">
           <p>
             NIK memang bisa dibaca strukturnya, tapi ia tidak memuat identitas
             pribadi pemiliknya. Dari nomornya saja, kamu tidak bisa mengetahui:

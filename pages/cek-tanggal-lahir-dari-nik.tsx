@@ -90,15 +90,15 @@ export default function CekTanggalLahirDariNik() {
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
         <PageHero
           title={meta.h1}
-          lead="Cara cek tanggal lahir dari NIK. Masukkan 16 digit NIK KTP untuk membaca tanggal lahir otomatis, lengkap dengan aturan +40 untuk perempuan."
-          className="mt-6"
+          lead="Masukkan 16 digit NIK untuk membaca tanggal lahir secara otomatis, lengkap dengan aturan +40 untuk perempuan."
+          className="mt-5"
         />
 
         <div className="mt-8">
           <Read />
         </div>
 
-        <ContentSection title="Cara melihat tanggal lahir dari NIK manual">
+        <ContentSection title="Membaca tanggal lahir NIK secara manual">
           <p>
             Tanggal lahir tersembunyi di digit ke-7 sampai ke-12 pada NIK.
             Berikut cara membacanya tanpa alat:

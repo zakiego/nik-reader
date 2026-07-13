@@ -65,8 +65,8 @@ export default function NikGenerator() {
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
         <PageHero
           title={meta.h1}
-          lead="Buat contoh NIK online. Pilih wilayah, jenis kelamin, dan tanggal lahir, lalu NIK contoh terbentuk otomatis mengikuti struktur resmi. Untuk testing dan edukasi, bukan data asli."
-          className="mt-6"
+          lead="Pilih wilayah, jenis kelamin, dan tanggal lahir, lalu contoh NIK terbentuk otomatis mengikuti struktur resmi. Untuk keperluan pengujian dan edukasi, bukan data asli."
+          className="mt-5"
         />
 
         <div className="mt-8">
