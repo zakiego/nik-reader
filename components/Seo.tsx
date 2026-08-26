@@ -7,7 +7,7 @@ interface Props {
   /** Full <title> content used verbatim (overrides `title`). */
   titleFull?: string;
   description?: string;
-  /** Path portion of the canonical URL, e.g. "/" or "/login". */
+  /** Path portion of the canonical URL, e.g. "/" or "/nik-generator". */
   path?: string;
   noindex?: boolean;
 }
