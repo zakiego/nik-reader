@@ -19,6 +19,8 @@
     "ignore": [
       "node_modules",
       ".next",
+      ".vercel",
+      ".wrangler",
       "lib/provinsi.ts",
       "lib/kabupaten.ts",
       "lib/kecamatan.ts"
