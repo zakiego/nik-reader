@@ -9,7 +9,9 @@ export default function Document() {
         {/* Light theme only: force light rendering of the UA and native controls */}
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#f8fafc" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </Head>
       <body>
         <Main />
