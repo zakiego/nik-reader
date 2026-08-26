@@ -16,9 +16,7 @@ export default function handler(req: Request) {
     router: appRouter,
     createContext: createTRPCContext,
     onError: ({ path, error }) => {
-      console.error(
-        `tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
-      );
+      console.error(`tRPC failed on ${path ?? "<no-path>"}: ${error.message}`);
     },
   });
 }

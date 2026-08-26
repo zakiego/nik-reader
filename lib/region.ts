@@ -25,7 +25,10 @@ const groupBy = <T, K extends keyof T>(items: readonly T[], key: K) => {
   const out: Record<string, T[]> = {};
   for (const item of items) {
     const bucket = String(item[key]);
-    (out[bucket] ??= []).push(item);
+    if (!out[bucket]) {
+      out[bucket] = [];
+    }
+    out[bucket].push(item);
   }
   return out;
 };
