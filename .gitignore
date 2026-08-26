@@ -2,3 +2,7 @@ node_modules
 .next
 .env
 *.tsbuildinfo
+
+# Cloudflare Pages / next-on-pages build output
+.vercel
+.wrangler
