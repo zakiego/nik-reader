@@ -1,4 +1,3 @@
-import { groupBy, keyBy } from "lodash";
 import { KABUPATEN } from "~/lib/kabupaten";
 import { KECAMATAN } from "~/lib/kecamatan";
 import { PROVINSI } from "~/lib/provinsi";
@@ -13,6 +12,23 @@ import { PROVINSI } from "~/lib/provinsi";
  * Lookups are backed by maps built once at module load, so both the point
  * lookups (`find*`) and the cascading lists (`list*`) are O(1).
  */
+
+/** Index a list by one of its string keys (lodash-free, Workers-safe). */
+const keyBy = <T, K extends keyof T>(items: readonly T[], key: K) => {
+  const out: Record<string, T> = {};
+  for (const item of items) out[String(item[key])] = item;
+  return out;
+};
+
+/** Bucket a list by one of its string keys (lodash-free, Workers-safe). */
+const groupBy = <T, K extends keyof T>(items: readonly T[], key: K) => {
+  const out: Record<string, T[]> = {};
+  for (const item of items) {
+    const bucket = String(item[key]);
+    (out[bucket] ??= []).push(item);
+  }
+  return out;
+};
 
 const provinsiById = keyBy(PROVINSI, "idProv");
 const kabupatenById = keyBy(KABUPATEN, "idKab");

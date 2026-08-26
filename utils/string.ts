@@ -1,9 +1,9 @@
-import { chunk } from "lodash";
-
 export const chunkTwoChars = (str: string): string => {
-  const split = chunk(str, 2)
-    .map((v) => v.join(""))
-    .join(" ");
+  const pairs: string[] = [];
 
-  return split;
+  for (let i = 0; i < str.length; i += 2) {
+    pairs.push(str.slice(i, i + 2));
+  }
+
+  return pairs.join(" ");
 };

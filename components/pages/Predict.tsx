@@ -2,7 +2,6 @@ import {
   InformationCircleIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
-import { split } from "lodash";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { match } from "ts-pattern";
@@ -74,7 +73,7 @@ export const Predict = () => {
       .when(
         (v) => v.birthDate && v.gender?.value === "P",
         (v) => {
-          const splitDate = split(v.birthDate, "-");
+          const splitDate = v.birthDate.split("-");
           const addForty = (parseInt(splitDate[2]) + 40).toString();
           const chunk = chunkTwoChars(
             `${addForty}${splitDate[1]}${splitDate[0].substring(2)}`,
@@ -85,7 +84,7 @@ export const Predict = () => {
       .when(
         (v) => v.birthDate,
         (v) => {
-          const splitDate = split(v.birthDate, "-");
+          const splitDate = v.birthDate.split("-");
           const chunk = chunkTwoChars(
             `${splitDate[2]}${splitDate[1]}${splitDate[0].substring(2)}`,
           );
