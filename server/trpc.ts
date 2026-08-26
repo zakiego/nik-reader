@@ -1,28 +1,16 @@
-import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
+import { initTRPC } from "@trpc/server";
+import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { getServerSession } from "~/server/auth";
 
-type CreateContextOptions = {
-  session: Session | null;
-};
-
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+/**
+ * Context for the tRPC handler. The app has no authentication and no database,
+ * so the only thing worth carrying through is the incoming request itself.
+ */
+export const createTRPCContext = (opts: FetchCreateContextFnOptions) => {
   return {
-    session: opts.session,
+    req: opts.req,
   };
-};
-
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-
-  const session = await getServerSession({ req, res });
-
-  return createInnerTRPCContext({
-    session,
-  });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -41,18 +29,3 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
-
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  });
-});
-
-export const privateProcedure = t.procedure.use(enforceUserIsAuthed);

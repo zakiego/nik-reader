@@ -1,17 +1,28 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { nikSchema } from "~/lib/nik-schema";
 import { extractDataFromNIK } from "~/utils/read";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const parsed = nikSchema.safeParse(req.body);
+export const config = {
+  runtime: "edge",
+};
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json; charset=utf-8" },
+  });
+
+export default async function handler(req: Request) {
+  // The edge runtime hands over a raw Request, so the JSON body has to be
+  // parsed here instead of relying on Next.js' Node body parser.
+  const body = await req.json().catch(() => null);
+  const parsed = nikSchema.safeParse(body);
 
   if (!parsed.success) {
-    return res
-      .status(400)
-      .json({ message: "NIK is not valid, character length must be 16" });
+    return json(
+      { message: "NIK is not valid, character length must be 16" },
+      400,
+    );
   }
 
-  const data = extractDataFromNIK(parsed.data.nik);
-
-  return res.status(200).json(data);
+  return json(extractDataFromNIK(parsed.data.nik));
 }

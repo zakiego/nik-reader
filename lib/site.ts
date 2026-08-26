@@ -16,7 +16,7 @@ export const SITE = {
   twitter: "@zakiego",
   /** Used for Article structured data (dates the guide content is valid for). */
   datePublished: "2024-01-01",
-  dateModified: "2026-01-01",
+  dateModified: "2026-08-26",
   keywords: [
     "NIK",
     "cek NIK",

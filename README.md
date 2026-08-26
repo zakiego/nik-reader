@@ -29,6 +29,16 @@ pnpm dev
 
 4. Open the browser and navigate to `http://localhost:3000`.
 
+## Deployment
+
+Deployed to [Cloudflare Pages](https://nik-reader.pages.dev) via [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages). Every server route runs on the Workers runtime.
+
+```bash
+pnpm pages:build     # build the Pages worker
+pnpm pages:preview   # run it locally on workerd
+pnpm pages:deploy    # deploy
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
