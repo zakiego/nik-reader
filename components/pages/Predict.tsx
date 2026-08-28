@@ -2,14 +2,19 @@ import {
   InformationCircleIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { match } from "ts-pattern";
 import { Combobox } from "~/components/UI";
 import { Input } from "~/components/UI/Input";
 import { GENDER } from "~/lib/gender";
+import {
+  loadKabupatenOptions,
+  loadKecamatanOptions,
+  loadProvinsiOptions,
+} from "~/lib/region-client";
 import { chunkTwoChars } from "~/utils/string";
-import { trpc } from "~/utils/trpc";
 
 type ComboboxOption = {
   value: string;
@@ -31,20 +36,29 @@ export const Predict = () => {
     control,
   });
 
-  // Region options are fetched on demand from the server instead of bundling
-  // the full datasets into the client. Each level is enabled only once its
-  // parent has been selected, so the cascade fetches the minimum needed.
-  const provinsiQuery = trpc.region.provinsi.useQuery();
+  // Region options are resolved in the browser from a lazily loaded chunk, so
+  // the cascade costs one CDN fetch instead of a request per level. Each level
+  // stays disabled until its parent is picked, and the data never changes, so
+  // the results are cached for the life of the page.
+  const provinsiQuery = useQuery({
+    queryKey: ["region", "provinsi"],
+    queryFn: () => loadProvinsiOptions(),
+    staleTime: Number.POSITIVE_INFINITY,
+  });
 
-  const kabupatenQuery = trpc.region.kabupaten.useQuery(
-    { idProv: watchValues.provinsi?.value ?? "" },
-    { enabled: !!watchValues.provinsi?.value },
-  );
+  const kabupatenQuery = useQuery({
+    queryKey: ["region", "kabupaten", watchValues.provinsi?.value],
+    queryFn: () => loadKabupatenOptions(watchValues.provinsi?.value ?? ""),
+    enabled: !!watchValues.provinsi?.value,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
 
-  const kecamatanQuery = trpc.region.kecamatan.useQuery(
-    { idKab: watchValues.kabupaten?.value ?? "" },
-    { enabled: !!watchValues.kabupaten?.value },
-  );
+  const kecamatanQuery = useQuery({
+    queryKey: ["region", "kecamatan", watchValues.kabupaten?.value],
+    queryFn: () => loadKecamatanOptions(watchValues.kabupaten?.value ?? ""),
+    enabled: !!watchValues.kabupaten?.value,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
 
   const createNIK = () => {
     const regionalCode = match(watchValues)
