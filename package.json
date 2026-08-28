@@ -8,7 +8,7 @@
     "format": "biome format --write .",
     "check": "biome check .",
     "typecheck": "tsc --noEmit",
-    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:build": "node scripts/build-routes.mjs && npx @cloudflare/next-on-pages",
     "pages:preview": "wrangler pages dev .vercel/output/static --compatibility-flags nodejs_compat",
     "pages:deploy": "wrangler pages deploy .vercel/output/static"
   },
