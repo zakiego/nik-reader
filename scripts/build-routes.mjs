@@ -49,7 +49,10 @@ const include = [
   ]),
 ].sort();
 
-await writeFile("_routes.json", `${JSON.stringify({ version: 1, include }, null, 2)}\n`);
+await writeFile(
+  "_routes.json",
+  `${JSON.stringify({ version: 1, include }, null, 2)}\n`,
+);
 
 console.log(`_routes.json: ${include.length} paths routed to the Worker`);
 for (const path of include) {

@@ -21,6 +21,7 @@
       ".next",
       ".vercel",
       ".wrangler",
+      "_routes.json",
       "lib/provinsi.ts",
       "lib/kabupaten.ts",
       "lib/kecamatan.ts"
