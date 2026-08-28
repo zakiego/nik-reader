@@ -7,7 +7,7 @@
  * no Pages Function invocation, so the list below is deliberately the *complete*
  * set of paths that genuinely need server code:
  *
- *   - the routes under `pages/api`, minus the exclusions below
+ *   - the routes under `pages/api`
  *   - `/_next/data/*`, the JSON payloads Next fetches for client-side navigation
  *   - every `source` of a redirect or rewrite in `next.config.js`
  *
@@ -19,18 +19,6 @@
 import { readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import nextConfig from "../next.config.js";
-
-/**
- * API routes that must NOT reach the Worker.
- *
- * Nothing in the app calls tRPC any more — reading a NIK and listing regions
- * both happen in the browser off a lazily loaded chunk. Leaving the endpoint
- * routed would bill a Worker invocation for every request from a tab still
- * running a pre-client-side bundle, which is roughly 69k a day against a 100k
- * daily limit. Served as a static asset instead, those requests 404 for free
- * and the stale tab recovers on its next reload.
- */
-const EXCLUDED_API_ROUTES = ["/api/trpc"];
 
 /** Paths that always need the Worker, whatever the filesystem says. */
 const ALWAYS_INCLUDE = ["/_next/data/*"];
@@ -77,9 +65,7 @@ const flattenRewrites = (rewrites) =>
         ...(rewrites?.fallback ?? []),
       ];
 
-const apiRoutes = (await listApiRoutes()).filter(
-  (route) => !EXCLUDED_API_ROUTES.some((prefix) => route.startsWith(prefix)),
-);
+const apiRoutes = await listApiRoutes();
 
 const redirects = (await nextConfig.redirects?.()) ?? [];
 const rewrites = flattenRewrites(await nextConfig.rewrites?.());
@@ -100,7 +86,4 @@ await writeFile(
 console.log(`_routes.json: ${include.length} paths routed to the Worker`);
 for (const path of include) {
   console.log(`  ${path}`);
-}
-for (const prefix of EXCLUDED_API_ROUTES) {
-  console.log(`  (excluded: ${prefix}/* — served as a static asset)`);
 }
