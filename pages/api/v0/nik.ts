@@ -24,5 +24,5 @@ export default async function handler(req: Request) {
     );
   }
 
-  return json(extractDataFromNIK(parsed.data.nik));
+  return json(await extractDataFromNIK(parsed.data.nik));
 }
