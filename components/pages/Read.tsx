@@ -5,12 +5,13 @@ import {
 } from "@heroicons/react/20/solid";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { NIK_LENGTH } from "~/lib/const";
 import { type NikInput, nikSchema } from "~/lib/nik-schema";
-import { trpc } from "~/utils/trpc";
+import { extractDataFromNIK } from "~/utils/read";
 
 export const Read = () => {
   const {
@@ -28,7 +29,12 @@ export const Read = () => {
   const isPartial = inputLength > 0 && inputLength < NIK_LENGTH;
   const remaining = NIK_LENGTH - inputLength;
 
-  const readNIK = trpc.nik.read.useMutation();
+  // Reading a NIK is a pure lookup, so it runs here in the browser. The region
+  // datasets it needs arrive as a lazy chunk on first read; keeping this off the
+  // server is what stops every read from costing a Pages Function invocation.
+  const readNIK = useMutation({
+    mutationFn: (values: NikInput) => extractDataFromNIK(values.nik),
+  });
   const { data, isLoading } = readNIK;
   const hasResult = !!data;
 

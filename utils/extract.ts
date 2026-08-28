@@ -1,6 +1,13 @@
 import { format, parse } from "date-fns";
 import { z } from "zod";
-import { findKabupaten, findKecamatan, findProvinsi } from "~/lib/region";
+
+/**
+ * Pure decoders for the parts of a NIK that the digits carry on their own.
+ *
+ * Nothing here touches the region datasets, so this module stays small enough to
+ * live in the client bundle. The region lookups sit in `~/utils/read`, which
+ * loads the datasets lazily.
+ */
 
 export function extractIdsFromNIK(NIK: string) {
   const idProv = NIK.substring(0, 2);
@@ -19,18 +26,6 @@ export function extractIdsFromNIK(NIK: string) {
     idUniqueId,
   };
 }
-
-export const getProvinsi = ({ idProv }: { idProv: string }) => {
-  return findProvinsi(idProv)?.name ?? null;
-};
-
-export const getKabupaten = ({ idKab }: { idKab: string }) => {
-  return findKabupaten(idKab)?.name ?? null;
-};
-
-export const getKecamatan = ({ idKec }: { idKec: string }) => {
-  return findKecamatan(idKec)?.name?.toUpperCase() ?? null;
-};
 
 export const getGender = ({ idGender }: { idGender: string | number }) => {
   try {
