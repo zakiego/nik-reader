@@ -37,6 +37,23 @@ declare global {
 }
 
 /**
+ * The backstop for the promise above. The tracker hands every payload, page
+ * views included, to `window.umamiBeforeSend` before it sends, and this swaps
+ * anything shaped like a NIK (16 digits, optionally split by spaces, dots,
+ * dashes, `+` or `%20`) in the URL, referrer, title or event data for "[nik]".
+ * A NIK stored as a JSON number can't be swapped without breaking the JSON, so
+ * that payload is dropped instead. Nothing sends a NIK today; this keeps a
+ * future `?nik=` link or a careless event from putting one in Umami.
+ *
+ * `_document.tsx` inlines it ahead of the tracker, so it's in place before the
+ * first page view goes out.
+ */
+export const UMAMI_BEFORE_SEND = String.raw`window.umamiBeforeSend = function (type, payload) {
+  var json = JSON.stringify(payload).replace(/\d(?:(?:[\s.+-]|%20)?\d){15}/g, "[nik]");
+  try { return JSON.parse(json); } catch (error) { return null; }
+};`;
+
+/**
  * Sends a custom event. The tracker is deferred, can be blocked, and only
  * reports from nik.zakiego.com (`data-domains`), so a missing or silent
  * `window.umami` is normal and the call does nothing.
