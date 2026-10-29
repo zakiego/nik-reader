@@ -1,4 +1,5 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { track } from "~/lib/analytics";
 import type { FaqItem } from "~/lib/structured-data";
 
 /**
@@ -23,7 +24,15 @@ export const Faq = ({
       </h2>
       <div className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
         {items.map((item) => (
-          <details key={item.q} className="group">
+          <details
+            key={item.q}
+            className="group"
+            onToggle={(e) => {
+              if (e.currentTarget.open) {
+                track("faq-open", { question: item.q });
+              }
+            }}
+          >
             <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-[15px] font-medium text-content transition-colors duration-150 ease-out hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:px-5 [&::-webkit-details-marker]:hidden">
               {item.q}
               <PlusIcon

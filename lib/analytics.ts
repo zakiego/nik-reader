@@ -1,3 +1,5 @@
+import type { Feature } from "~/lib/const";
+
 /**
  * Custom events for the self-hosted Umami tracker loaded in `_document.tsx`,
  * keyed by name with the data each one carries. They show up under Events for
@@ -15,6 +17,15 @@ type Events = {
   "nik-read-error": { error: string };
   /** The generator preview filled in: region, gender and birth date are set. */
   "nik-generate": undefined;
+  /** The home page tool switched tabs. */
+  "tab-switch": { tab: Feature };
+  /** An FAQ answer was opened. */
+  "faq-open": { question: string };
+  /**
+   * A link out to zakiego.com was clicked. The tracker sends this one itself,
+   * from the `data-umami-event` attributes on the navbar and footer links.
+   */
+  "zakiego-click": { location: "navbar" | "footer" };
 };
 
 declare global {
