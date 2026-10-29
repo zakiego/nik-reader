@@ -1,0 +1,10 @@
+# pnpm 11+ reads allowBuilds. pnpm 10 reads onlyBuiltDependencies.
+# Keep both lists in sync while either version may run the install.
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  workerd: true
+onlyBuiltDependencies:
+  - "@biomejs/biome"
+  - esbuild
+  - workerd
