@@ -30,6 +30,8 @@ export const Navbar = () => {
         rel="noopener noreferrer"
         aria-label="Kunjungi zakiego.com"
         title="zakiego.com"
+        data-umami-event="zakiego-click"
+        data-umami-event-location="navbar"
         className="grid h-9 w-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
       >
         <GlobeAltIcon className="h-5 w-5" aria-hidden="true" />

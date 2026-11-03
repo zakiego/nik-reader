@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/20/solid";
 import { Dispatch, FC, SetStateAction } from "react";
+import { track } from "~/lib/analytics";
 import { Feature } from "~/lib/const";
 
 interface Props {
@@ -32,7 +33,10 @@ export const Tab: FC<Props> = ({ selectedTab, setSelectedTab }) => {
             type="button"
             role="tab"
             aria-selected={active}
-            onClick={() => setSelectedTab(tab)}
+            onClick={() => {
+              if (!active) track("tab-switch", { tab });
+              setSelectedTab(tab);
+            }}
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold outline-none transition duration-200 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2 ${
               active
                 ? "bg-surface text-content shadow-sm"

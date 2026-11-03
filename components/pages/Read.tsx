@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { track } from "~/lib/analytics";
 import { NIK_LENGTH } from "~/lib/const";
 import { type NikInput, nikSchema } from "~/lib/nik-schema";
 import { extractDataFromNIK } from "~/utils/read";
@@ -34,6 +35,19 @@ export const Read = () => {
   // server is what stops every read from costing a Pages Function invocation.
   const readNIK = useMutation({
     mutationFn: (values: NikInput) => extractDataFromNIK(values.nik),
+    // Analytics gets the names of the fields that didn't decode, never the
+    // decoded values, so a stale region dataset shows up without the NIK.
+    onSuccess: (result) => {
+      const missing = Object.entries(result)
+        .filter(([, value]) => value === null)
+        .map(([field]) => field);
+      track("nik-read", { missing: missing.join(",") || "none" });
+    },
+    onError: (error) => {
+      track("nik-read-error", {
+        error: error instanceof Error ? error.name : "unknown",
+      });
+    },
   });
   const { data, isLoading } = readNIK;
   const hasResult = !!data;

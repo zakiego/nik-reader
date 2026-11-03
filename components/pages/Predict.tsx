@@ -8,6 +8,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { match } from "ts-pattern";
 import { Combobox } from "~/components/UI";
 import { Input } from "~/components/UI/Input";
+import { track } from "~/lib/analytics";
 import { GENDER } from "~/lib/gender";
 import {
   loadKabupatenOptions,
@@ -124,6 +125,18 @@ export const Predict = () => {
   useEffect(() => {
     setValue("kecamatan", null);
   }, [watchKabupaten, setValue]);
+
+  const isComplete = !!(
+    watchValues.kecamatan &&
+    watchValues.gender &&
+    watchValues.birthDate
+  );
+
+  // Count a generated NIK once, when the last field gets filled in, not again
+  // on every tweak to a pattern that's already complete.
+  useEffect(() => {
+    if (isComplete) track("nik-generate");
+  }, [isComplete]);
 
   return (
     <div className="mt-8">
