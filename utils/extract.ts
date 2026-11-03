@@ -1,5 +1,6 @@
 import { format, parse } from "date-fns";
 import { z } from "zod";
+import { GENDER } from "~/lib/gender";
 
 /**
  * Pure decoders for the parts of a NIK that the digits carry on their own.
@@ -30,12 +31,11 @@ export function extractIdsFromNIK(NIK: string) {
 export const getGender = ({ idGender }: { idGender: string | number }) => {
   try {
     const id = z.coerce.number().parse(idGender);
+    const gender = GENDER.find((g) =>
+      id > 40 ? g.value === "P" : g.value === "L",
+    );
 
-    if (id > 40) {
-      return "PEREMPUAN";
-    }
-
-    return "LAKI-LAKI";
+    return gender ? `${gender.symbol} ${gender.label}` : null;
   } catch (error) {
     return null;
   }

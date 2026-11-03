@@ -191,7 +191,7 @@ export const Predict = () => {
             <Combobox
               options={GENDER.map((g) => ({
                 value: g.value,
-                label: g.label.toUpperCase(),
+                label: `${g.symbol} ${g.label}`,
               }))}
               label="Jenis Kelamin"
               className="w-full sm:w-[50%]"
