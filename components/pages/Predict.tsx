@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { match } from "ts-pattern";
-import { Combobox } from "~/components/UI";
-import { Input } from "~/components/UI/Input";
+import { Combobox } from "~/components/form";
+import { Input } from "~/components/form/Input";
 import { track } from "~/lib/analytics";
 import { GENDER } from "~/lib/gender";
 import {
