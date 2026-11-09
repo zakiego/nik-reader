@@ -11,7 +11,14 @@ import {
   SearchIcon,
   XIcon,
 } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
@@ -54,6 +61,9 @@ import { cn } from "~/lib/utils";
 import { getBirthDateDetails } from "~/utils/extract";
 import { type ExtractedNik, extractDataFromNIK } from "~/utils/read";
 
+/** Id of the NIK anatomy explainer that sits below the tool on every page using it. */
+const ANATOMY_ID = "arti-digit-nik";
+
 /** KTP is issued at 17, so a younger 2000s reading is worth a second look. */
 const KTP_AGE = 17;
 
@@ -95,7 +105,9 @@ export const Read = () => {
   const readNik = readNIK.variables?.nik;
 
   const onSubmit = form.handleSubmit(
-    (values) => readNIK.mutate(values),
+    (values) => {
+      if (!readNIK.isLoading) readNIK.mutate(values);
+    },
     () => inputRef.current?.focus(),
   );
 
@@ -172,6 +184,7 @@ export const Read = () => {
                       {length > 0 && (
                         <InputGroupButton
                           size="icon-sm"
+                          className="relative after:absolute after:-inset-1.5"
                           aria-label="Kosongkan NIK"
                           onClick={clearAll}
                         >
@@ -181,7 +194,7 @@ export const Read = () => {
                     </InputGroupAddon>
                   </InputGroup>
                   {showError ? (
-                    <FieldError id="nik-hint">
+                    <FieldError id="nik-hint" role={undefined}>
                       {length === 0
                         ? "Masukkan 16 digit NIK dulu."
                         : `NIK harus 16 digit, kurang ${remaining} lagi.`}
@@ -189,7 +202,7 @@ export const Read = () => {
                   ) : (
                     <FieldDescription id="nik-hint">
                       {isComplete
-                        ? "Lengkap. Tekan Baca NIK atau Enter."
+                        ? "Lengkap. Tekan Baca NIK."
                         : length > 0
                           ? `Kurang ${remaining} digit lagi.`
                           : "Ketik atau tempel NIK. Spasi dan tanda baca dibuang otomatis."}
@@ -204,7 +217,9 @@ export const Read = () => {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={readNIK.isLoading}
+            // aria-disabled, not disabled: disabling the focused button would
+            // drop keyboard focus to <body> right as the result lands.
+            aria-disabled={readNIK.isLoading}
           >
             {isLoading ? (
               <>
@@ -249,26 +264,41 @@ const ResultCard = ({
   onReset: () => void;
 }) => {
   const hasResult = !!data && !!nik && !isLoading;
+  const rowsRef = useRef<HTMLDListElement>(null);
+
+  // One short, always-rendered status line for screen readers, instead of a
+  // live region that would read out every row.
+  const status = isLoading
+    ? "Membaca NIK…"
+    : hasResult
+      ? `Hasil untuk NIK ${splitNik(nik)} sudah tampil.`
+      : "";
 
   return (
     <Card className="dark mt-8 shadow-panel">
-      <CardHeader className="gap-1 space-y-0 border-b px-6 py-4 sm:px-7">
-        <CardTitle className="text-sm">Detail NIK</CardTitle>
-        <CardDescription
-          key={hasResult ? nik : "empty"}
-          className={cn(
-            hasResult && "tabular animate-fade font-mono tracking-wider",
+      <p role="status" className="sr-only">
+        {status}
+      </p>
+      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 border-b px-6 py-4 sm:px-7">
+        <div className="flex min-w-0 flex-col gap-1">
+          <CardTitle role="heading" aria-level={2} className="text-sm">
+            Detail NIK
+          </CardTitle>
+          {hasResult && (
+            <CardDescription
+              key={nik}
+              className="tabular animate-fade font-mono tracking-wider"
+            >
+              {splitNik(nik)}
+            </CardDescription>
           )}
-        >
-          {hasResult ? splitNik(nik) : "Hasil baca muncul di sini."}
-        </CardDescription>
+        </div>
+        <Button variant="link" size="sm" className="shrink-0 px-0" asChild>
+          <a href={`#${ANATOMY_ID}`}>Lihat arti tiap digit</a>
+        </Button>
       </CardHeader>
 
-      <CardContent
-        aria-live="polite"
-        aria-busy={isLoading}
-        className="px-6 py-2 sm:px-7"
-      >
+      <CardContent aria-busy={isLoading} className="px-6 py-2 sm:px-7">
         {isLoading ? (
           <ResultSkeleton />
         ) : isError ? (
@@ -284,19 +314,19 @@ const ResultCard = ({
             </AlertDescription>
           </Alert>
         ) : hasResult ? (
-          <ResultRows key={nik} nik={nik} data={data} />
+          <ResultRows key={nik} ref={rowsRef} nik={nik} data={data} />
         ) : (
           <Empty className="animate-fade gap-4 p-4 md:p-6">
             <EmptyHeader>
-              <EmptyMedia variant="icon">
+              <EmptyMedia variant="icon" className="rounded-full">
                 <IdCardIcon aria-hidden="true" />
               </EmptyMedia>
               <EmptyTitle className="text-base">
                 Belum ada NIK yang dibaca
               </EmptyTitle>
               <EmptyDescription>
-                Setiap hasil ditampilkan bersama digit asalnya, jadi kamu bisa
-                mencocokkannya sendiri.
+                Ketik atau tempel NIK di atas, lalu tekan Baca NIK. Tiap hasil
+                ditampilkan bersama digit asalnya.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -304,11 +334,12 @@ const ResultCard = ({
       </CardContent>
 
       {hasResult && (
-        <CardFooter className="animate-fade flex-col gap-2 border-t px-6 py-4 [animation-delay:80ms] min-[360px]:flex-row sm:px-7">
-          <CopyButton nik={nik} data={data} />
+        <CardFooter className="animate-fade flex-col gap-2 border-t px-6 py-4 [animation-delay:80ms] min-[360px]:flex-row min-[360px]:flex-wrap sm:px-7">
+          <CopyButton nik={nik} data={data} selectOnFail={rowsRef} />
           <Button
             variant="ghost"
-            className="h-10 w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
+            size="md"
+            className="w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
             onClick={onReset}
           >
             <RotateCcwIcon aria-hidden="true" />
@@ -402,8 +433,11 @@ const buildRows = (nik: string, data: ExtractedNik): Row[] => {
 // up, and the last row lands by ~300ms.
 const ROW_DELAYS_MS = [0, 25, 45, 60, 70, 80];
 
-const ResultRows = ({ nik, data }: { nik: string; data: ExtractedNik }) => (
-  <dl className="divide-y">
+const ResultRows = forwardRef<
+  HTMLDListElement,
+  { nik: string; data: ExtractedNik }
+>(({ nik, data }, ref) => (
+  <dl ref={ref} className="divide-y">
     {buildRows(nik, data).map((row, index) => (
       <div
         key={row.key}
@@ -431,7 +465,8 @@ const ResultRows = ({ nik, data }: { nik: string; data: ExtractedNik }) => (
       </div>
     ))}
   </dl>
-);
+));
+ResultRows.displayName = "ResultRows";
 
 const DigitsBadge = ({ text, newFrom }: { text: string; newFrom: number }) => (
   <Badge
@@ -456,11 +491,20 @@ const ResultSkeleton = () => (
   </div>
 );
 
-const CopyButton = ({ nik, data }: { nik: string; data: ExtractedNik }) => {
+const CopyButton = ({
+  nik,
+  data,
+  selectOnFail,
+}: {
+  nik: string;
+  data: ExtractedNik;
+  /** Selected when copying fails, so the text can be copied by hand. */
+  selectOnFail: RefObject<HTMLElement>;
+}) => {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
 
   useEffect(() => {
-    if (state === "idle") return;
+    if (state !== "copied") return;
     const timer = setTimeout(() => setState("idle"), 2000);
     return () => clearTimeout(timer);
   }, [state]);
@@ -473,13 +517,16 @@ const CopyButton = ({ nik, data }: { nik: string; data: ExtractedNik }) => {
       ),
     ].join("\n");
 
-    try {
-      await navigator.clipboard.writeText(text);
+    if (await copyText(text)) {
       setState("copied");
       track("nik-copy");
-    } catch {
-      setState("failed");
+      return;
     }
+
+    if (selectOnFail.current) {
+      window.getSelection()?.selectAllChildren(selectOnFail.current);
+    }
+    setState("failed");
   };
 
   const labels: Record<typeof state, ReactNode> = {
@@ -497,25 +544,69 @@ const CopyButton = ({ nik, data }: { nik: string; data: ExtractedNik }) => {
     ),
     failed: (
       <>
-        <CircleAlertIcon aria-hidden="true" />
-        Gagal menyalin
+        <CopyIcon aria-hidden="true" />
+        Coba salin lagi
       </>
     ),
   };
 
   return (
-    <Button
-      variant="secondary"
-      className="h-10 w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
-      onClick={copy}
-      aria-live="polite"
-    >
-      {/* Keyed so each state swap replays the entrance. */}
-      <span key={state} className="flex animate-swap-in items-center gap-2">
-        {labels[state]}
-      </span>
-    </Button>
+    <>
+      <Button
+        variant="secondary"
+        size="md"
+        className="w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
+        onClick={copy}
+      >
+        {/* Keyed so each state swap replays the entrance. */}
+        <span key={state} className="flex animate-swap-in items-center gap-2">
+          {labels[state]}
+        </span>
+      </Button>
+      {/* Always rendered so screen readers pick up changes; only the failure
+          note is visible. */}
+      <p
+        role="status"
+        className={cn(
+          state === "failed"
+            ? "order-last w-full text-xs text-muted-foreground"
+            : "sr-only",
+        )}
+      >
+        {state === "failed"
+          ? "Browser ini tidak mengizinkan menyalin otomatis. Teks hasil sudah dipilih, salin secara manual."
+          : state === "copied"
+            ? "Hasil tersalin."
+            : ""}
+      </p>
+    </>
   );
+};
+
+/**
+ * Clipboard API first, then the old execCommand route, which still works in
+ * some in-app browsers that block the API. False when both fail.
+ */
+const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } catch {
+      return false;
+    } finally {
+      textarea.remove();
+    }
+  }
 };
 
 /** "6371015203950001" -> "63 71 01 520395 0001", split by meaning. */
