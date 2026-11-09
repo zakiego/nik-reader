@@ -19,6 +19,30 @@
   --color-success: 0.527 0.154 150.069; /* green-700 */
   --color-danger: 0.577 0.245 27.325; /* red-600 */
 
+  /* shadcn/ui roles, mapped onto the tokens above. */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-fg);
+  --secondary: var(--color-surface-2);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surface-2);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-surface-2);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-danger);
+  --destructive-foreground: 1 0 0;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-primary);
+  /* Control radius (12px). Only shadcn's calc() offsets read it; the Tailwind
+     rounded-* scale stays at its defaults. */
+  --radius: 0.75rem;
+
   /* Motion tokens. One easing + duration scale so every transition and
      entrance shares the same rhythm. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -27,7 +51,37 @@
   --duration-base: 220ms;
 }
 
+/* The dark panel (the result card). Not a site-wide dark mode: the class only
+   scopes a dark surface, so its shadcn components pick up these roles. Same
+   slate family as the light theme. */
+.dark {
+  --background: 0.129 0.042 264.695; /* slate-950 */
+  --foreground: 0.984 0.003 247.858; /* slate-50 */
+  --card: 0.208 0.042 265.755; /* slate-900 */
+  --card-foreground: 0.984 0.003 247.858;
+  --popover: 0.208 0.042 265.755;
+  --popover-foreground: 0.984 0.003 247.858;
+  --primary: 0.984 0.003 247.858;
+  --primary-foreground: 0.208 0.042 265.755;
+  --secondary: 0.279 0.041 260.031; /* slate-800 */
+  --secondary-foreground: 0.984 0.003 247.858;
+  --muted: 0.279 0.041 260.031;
+  --muted-foreground: 0.704 0.04 256.788; /* slate-400 */
+  --accent: 0.279 0.041 260.031;
+  --accent-foreground: 0.984 0.003 247.858;
+  --destructive: 0.704 0.191 22.216; /* red-400 */
+  --destructive-foreground: 0.984 0.003 247.858;
+  --border: 0.279 0.041 260.031;
+  --input: 0.372 0.044 257.287; /* slate-700 */
+  --ring: 0.704 0.04 256.788;
+  color-scheme: dark;
+}
+
 @layer base {
+  * {
+    @apply border-border;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -47,15 +101,6 @@
   /* Tabular figures keep the 16-digit NIK readouts from shifting width */
   .tabular {
     font-variant-numeric: tabular-nums;
-  }
-
-  /* text-wrap helpers (defined here so they work on Tailwind < 3.4) */
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .text-pretty {
-    text-wrap: pretty;
   }
 }
 

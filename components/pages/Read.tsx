@@ -120,7 +120,7 @@ export const Read = () => {
                 ? "text-success"
                 : isPartial
                   ? "text-danger"
-                  : "text-muted"
+                  : "text-muted-foreground"
             }`}
           >
             {isComplete

@@ -168,7 +168,7 @@ export const Predict = () => {
 
       <div className="mt-8">
         <h3 className="text-sm font-medium text-content">Lengkapi data</h3>
-        <p className="mt-1 text-xs text-muted">
+        <p className="mt-1 text-xs text-muted-foreground">
           NIK terbentuk otomatis dari pilihan di bawah.
         </p>
 

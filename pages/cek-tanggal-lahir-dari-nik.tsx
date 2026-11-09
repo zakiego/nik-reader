@@ -145,7 +145,7 @@ export default function CekTanggalLahirDariNik() {
 
         <Faq items={FAQ} />
 
-        <p className="mt-10 text-sm text-muted">
+        <p className="mt-10 text-sm text-muted-foreground">
           Ingin membaca seluruh bagian NIK, bukan cuma tanggal lahir? Gunakan{" "}
           <Link
             href={ROUTES.home.path}

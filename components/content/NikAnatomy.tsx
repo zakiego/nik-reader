@@ -107,11 +107,11 @@ export const NikAnatomy = ({ highlight }: { highlight?: SegmentKey }) => {
             <div>
               <dt className="text-sm font-semibold text-content">
                 {seg.label}{" "}
-                <span className="tabular font-mono text-xs font-medium text-muted">
+                <span className="tabular font-mono text-xs font-medium text-muted-foreground">
                   ({seg.digits})
                 </span>
               </dt>
-              <dd className="mt-0.5 text-sm leading-relaxed text-muted">
+              <dd className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
                 {seg.meaning}
               </dd>
             </div>

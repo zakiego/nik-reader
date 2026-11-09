@@ -21,7 +21,9 @@ export const Footer = () => {
           </div>
           <div className="leading-tight">
             <div className="text-sm font-semibold text-content">NIK Reader</div>
-            <div className="text-xs text-muted">Reader &amp; Generator</div>
+            <div className="text-xs text-muted-foreground">
+              Reader &amp; Generator
+            </div>
           </div>
         </Link>
 
@@ -33,13 +35,13 @@ export const Footer = () => {
           title="zakiego.com"
           data-umami-event="zakiego-click"
           data-umami-event-location="footer"
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
         >
           <GlobeAltIcon className="h-5 w-5" aria-hidden="true" />
         </a>
       </div>
 
-      <p className="mt-4 text-xs leading-relaxed text-muted">
+      <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
         Baca &amp; generate contoh NIK untuk keperluan edukasi.
       </p>
 
@@ -49,7 +51,7 @@ export const Footer = () => {
             <li key={route.path}>
               <Link
                 href={route.path}
-                className="rounded text-sm text-muted underline-offset-2 transition-colors duration-150 ease-out hover:text-content hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="rounded text-sm text-muted-foreground underline-offset-2 transition-colors duration-150 ease-out hover:text-content hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {route.path === "/" ? "Beranda" : route.navShort}
               </Link>
@@ -59,7 +61,7 @@ export const Footer = () => {
       </nav>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-5">
-        <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted">
+        <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted-foreground">
           <ShieldCheckIcon
             className="h-3.5 w-3.5 shrink-0 text-success"
             aria-hidden="true"

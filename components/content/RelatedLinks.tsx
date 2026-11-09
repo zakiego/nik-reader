@@ -43,7 +43,7 @@ export const RelatedLinks = ({ currentPath }: { currentPath: string }) => {
                 <span className="block text-sm font-semibold text-content">
                   {route.navLabel}
                 </span>
-                <span className="mt-1 block text-xs leading-relaxed text-muted">
+                <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
                   {route.navBlurb}
                 </span>
               </span>

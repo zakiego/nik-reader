@@ -18,7 +18,7 @@ export const Navbar = () => {
           <div className="text-lg font-bold tracking-tight text-content">
             NIK
           </div>
-          <div className="text-xs font-medium text-muted">
+          <div className="text-xs font-medium text-muted-foreground">
             Reader &amp; Generator
           </div>
         </div>
@@ -32,7 +32,7 @@ export const Navbar = () => {
         title="zakiego.com"
         data-umami-event="zakiego-click"
         data-umami-event-location="navbar"
-        className="grid h-9 w-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
       >
         <GlobeAltIcon className="h-5 w-5" aria-hidden="true" />
       </a>
