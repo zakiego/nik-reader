@@ -1,0 +1,14 @@
+{
+  "name": "NIK Reader",
+  "short_name": "NIK Reader",
+  "description": "Baca dan buat contoh NIK (Nomor Induk Kependudukan) langsung di browser.",
+  "lang": "id",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f7f9fc",
+  "theme_color": "#f7f9fc",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

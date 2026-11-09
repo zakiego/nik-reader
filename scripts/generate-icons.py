@@ -1,7 +1,7 @@
 """Generate the nik-reader icon set from the navbar logo mark.
 
-The mark is the one rendered in components/Navbar.tsx: a rounded square filled
-with the primary gradient (#0E1111 -> #27272A, to-br) holding a white heroicons
+The mark is the one rendered in components/site/BrandMark.tsx: a rounded square
+in the KTP-blue primary (--primary, #0850ab) holding a white heroicons
 IdentificationIcon (24 solid).
 
 The 16px .ico layer does NOT downscale the full glyph — at that size the head,
@@ -25,26 +25,18 @@ GLYPH = (
     "01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15z"
 )
 
-PRIMARY = "#0E1111"        # --color-primary
-PRIMARY_HOVER = "#27272A"  # --color-primary-hover (zinc-800)
-
-GRADIENT = (
-    '<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
-    f'<stop offset="0" stop-color="{PRIMARY}"/>'
-    f'<stop offset="1" stop-color="{PRIMARY_HOVER}"/>'
-    "</linearGradient></defs>"
-)
+PRIMARY = "#0850ab"  # --primary in styles/globals.css, oklch(0.45 0.16 258)
 
 
 def full_mark(size: int, radius_ratio: float, glyph_ratio: float) -> str:
-    """The real heroicons glyph on the gradient plate. Legible from 32px up."""
+    """The real heroicons glyph on the primary plate. Legible from 32px up."""
     r = size * radius_ratio
     g = size * glyph_ratio
     off = (size - g) / 2
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
-        f'viewBox="0 0 {size} {size}">{GRADIENT}'
-        f'<rect width="{size}" height="{size}" rx="{r}" ry="{r}" fill="url(#bg)"/>'
+        f'viewBox="0 0 {size} {size}">'
+        f'<rect width="{size}" height="{size}" rx="{r}" ry="{r}" fill="{PRIMARY}"/>'
         f'<g transform="translate({off} {off}) scale({g / 24})">'
         f'<path fill="#FFFFFF" fill-rule="evenodd" clip-rule="evenodd" d="{GLYPH}"/>'
         "</g></svg>"
@@ -59,8 +51,8 @@ def small_mark(size: int) -> str:
     """
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
-        f'viewBox="0 0 16 16">{GRADIENT}'
-        '<rect width="16" height="16" rx="3.2" ry="3.2" fill="url(#bg)"/>'
+        'viewBox="0 0 16 16">'
+        f'<rect width="16" height="16" rx="3.2" ry="3.2" fill="{PRIMARY}"/>'
         '<rect x="2.4" y="4" width="11.2" height="8" rx="1.5" ry="1.5" fill="#FFFFFF"/>'
         f'<circle cx="5.9" cy="8" r="1.85" fill="{PRIMARY}"/>'
         f'<rect x="9" y="6.6" width="3.7" height="1.2" rx="0.6" fill="{PRIMARY}"/>'
@@ -84,8 +76,8 @@ def render(svg_text: str, png_path: pathlib.Path, size: int) -> None:
     src.unlink()
 
 
-# favicon.svg — scalable, matches the navbar radius (rounded-xl = 12/40 = 0.30)
-favicon_svg = full_mark(512, radius_ratio=0.30, glyph_ratio=0.60)
+# favicon.svg — scalable, matches the header mark (rounded-lg = 12/32 = 0.375)
+favicon_svg = full_mark(512, radius_ratio=0.375, glyph_ratio=0.62)
 (OUT / "favicon.svg").write_text(favicon_svg)
 
 # .ico layers, each drawn at its target size rather than downscaled.
@@ -96,6 +88,10 @@ render(full_mark(48, radius_ratio=0.24, glyph_ratio=0.64), OUT / "layer-48.png",
 
 # apple-touch-icon — square and opaque, iOS applies its own rounding
 render(full_mark(180, radius_ratio=0.0, glyph_ratio=0.54), OUT / "apple-touch-icon.png", 180)
+
+# web manifest icons: square and opaque, glyph inside the 80% maskable safe zone
+render(full_mark(192, radius_ratio=0.0, glyph_ratio=0.56), OUT / "icon-192.png", 192)
+render(full_mark(512, radius_ratio=0.0, glyph_ratio=0.56), OUT / "icon-512.png", 512)
 
 # assemble the multi-size .ico (ImageMagick keeps each layer as given;
 # Pillow's ICO writer would downscale one source for every size)
@@ -109,4 +105,4 @@ subprocess.run(
 for layer in (16, 32, 48):
     (OUT / f"layer-{layer}.png").unlink(missing_ok=True)
 
-print("built: favicon.ico, favicon.svg, apple-touch-icon.png")
+print("built: favicon.ico, favicon.svg, apple-touch-icon.png, icon-192.png, icon-512.png")

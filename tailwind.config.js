@@ -1,8 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+
+/** A color role stored as OKLCH channels in styles/globals.css. */
+const role = (name) => `oklch(var(--${name}) / <alpha-value>)`;
+
 module.exports = {
-  // Light theme only. `dark:` variants never activate from the OS setting; the
-  // `dark` class is only used to scope a dark surface (the result panel).
-  darkMode: "class",
+  // Dark follows the system setting; the tokens swap in styles/globals.css.
+  darkMode: "media",
   // `hover:` only applies where the pointer can hover, so a tap on a phone
   // doesn't leave a button stuck in its hover state.
   future: { hoverOnlyWhenSupported: true },
@@ -13,102 +16,96 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Semantic tokens driven by CSS variables (see styles/globals.css).
-        // Channels are stored as OKLCH "L C H" so Tailwind's /opacity modifiers work.
-        bg: "oklch(var(--color-bg) / <alpha-value>)",
-        surface: "oklch(var(--color-surface) / <alpha-value>)",
-        "surface-2": "oklch(var(--color-surface-2) / <alpha-value>)",
-        line: "oklch(var(--color-border) / <alpha-value>)",
-        content: "oklch(var(--color-text) / <alpha-value>)",
-        faint: "oklch(var(--color-faint) / <alpha-value>)",
-        success: "oklch(var(--color-success) / <alpha-value>)",
-        danger: "oklch(var(--color-danger) / <alpha-value>)",
-
-        // shadcn/ui roles. In :root they point at the tokens above; a `.dark`
-        // subtree swaps them for the dark panel (see styles/globals.css).
-        background: "oklch(var(--background) / <alpha-value>)",
-        foreground: "oklch(var(--foreground) / <alpha-value>)",
+        background: role("background"),
+        foreground: role("foreground"),
         card: {
-          DEFAULT: "oklch(var(--card) / <alpha-value>)",
-          foreground: "oklch(var(--card-foreground) / <alpha-value>)",
+          DEFAULT: role("card"),
+          foreground: role("card-foreground"),
         },
         popover: {
-          DEFAULT: "oklch(var(--popover) / <alpha-value>)",
-          foreground: "oklch(var(--popover-foreground) / <alpha-value>)",
+          DEFAULT: role("popover"),
+          foreground: role("popover-foreground"),
         },
         primary: {
-          DEFAULT: "oklch(var(--primary) / <alpha-value>)",
-          foreground: "oklch(var(--primary-foreground) / <alpha-value>)",
-          hover: "oklch(var(--color-primary-hover) / <alpha-value>)",
-          fg: "oklch(var(--color-primary-fg) / <alpha-value>)",
+          DEFAULT: role("primary"),
+          foreground: role("primary-foreground"),
         },
         secondary: {
-          DEFAULT: "oklch(var(--secondary) / <alpha-value>)",
-          foreground: "oklch(var(--secondary-foreground) / <alpha-value>)",
+          DEFAULT: role("secondary"),
+          foreground: role("secondary-foreground"),
         },
         muted: {
-          DEFAULT: "oklch(var(--muted) / <alpha-value>)",
-          foreground: "oklch(var(--muted-foreground) / <alpha-value>)",
+          DEFAULT: role("muted"),
+          foreground: role("muted-foreground"),
         },
         accent: {
-          DEFAULT: "oklch(var(--accent) / <alpha-value>)",
-          foreground: "oklch(var(--accent-foreground) / <alpha-value>)",
+          DEFAULT: role("accent"),
+          foreground: role("accent-foreground"),
         },
         destructive: {
-          DEFAULT: "oklch(var(--destructive) / <alpha-value>)",
-          foreground: "oklch(var(--destructive-foreground) / <alpha-value>)",
+          DEFAULT: role("destructive"),
+          foreground: role("destructive-foreground"),
         },
-        border: "oklch(var(--border) / <alpha-value>)",
-        input: "oklch(var(--input) / <alpha-value>)",
-        ring: "oklch(var(--ring) / <alpha-value>)",
+        success: role("success"),
+        border: role("border"),
+        input: role("input"),
+        ring: role("ring"),
+        // The segment an element sits in (set by data-seg, see globals.css).
+        seg: role("seg"),
+      },
+      // One radius scale: 6px chips and slots, 12px controls, 16px panels.
+      borderRadius: {
+        sm: "0.375rem",
+        md: "0.375rem",
+        lg: "0.75rem",
+        xl: "0.75rem",
+        "2xl": "1rem",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       transitionTimingFunction: {
         out: "var(--ease-out)",
         "in-out": "var(--ease-in-out)",
       },
-      boxShadow: {
-        card: "0 1px 2px 0 oklch(0.208 0.042 265.755 / 0.04), 0 12px 32px -16px oklch(0.208 0.042 265.755 / 0.14)",
-        panel:
-          "0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 30px 60px -28px oklch(0.13 0.028 261.7 / 0.65)",
-      },
       keyframes: {
-        "fade-in": {
+        // A result row or panel arriving.
+        "rise-in": {
           from: { opacity: "0", transform: "translateY(6px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        "fade-up": {
-          from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         fade: {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
-        // A result row arriving: shorter rise than fade-in, it's one of six.
-        "row-in": {
-          from: { opacity: "0", transform: "translateY(4px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        // A button label swapping state (Salin hasil -> Tersalin).
+        // A button label swapping state (Salin -> Tersalin).
         "swap-in": {
           from: { opacity: "0", transform: "scale(0.9)", filter: "blur(2px)" },
           to: { opacity: "1", transform: "scale(1)", filter: "blur(0)" },
         },
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
       animation: {
-        "fade-in": "fade-in 0.28s var(--ease-out) both",
-        "fade-up": "fade-up 0.5s var(--ease-out) both",
+        "rise-in": "rise-in var(--duration-base) var(--ease-out) both",
         fade: "fade var(--duration-base) var(--ease-out) both",
-        "row-in": "row-in var(--duration-base) var(--ease-out) both",
         "swap-in": "swap-in var(--duration-fast) var(--ease-out) both",
+        "caret-blink": "caret-blink 1.1s ease-out infinite",
+        "accordion-down": "accordion-down 200ms var(--ease-out)",
+        "accordion-up": "accordion-up 160ms var(--ease-out)",
       },
     },
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("tailwindcss-animate")],
 };

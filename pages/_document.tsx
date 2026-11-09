@@ -7,12 +7,22 @@ export default function Document() {
       <Head>
         {/* Keep long numeric strings (like a NIK) from being auto-linked as phone numbers on iOS */}
         <meta name="format-detection" content="telephone=no" />
-        {/* Light theme only: force light rendering of the UA and native controls */}
-        <meta name="color-scheme" content="light" />
-        <meta name="theme-color" content="#f8fafc" />
+        {/* Light and dark follow the system; the bar color matches --background */}
+        <meta name="color-scheme" content="light dark" />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: light)"
+          content="#f7f9fc"
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: dark)"
+          content="#0b0f18"
+        />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
         {/* Self-hosted Umami; data-domains keeps localhost and preview deploys out,
             and data-before-send strips anything shaped like a NIK from every payload */}
         <script
