@@ -2,80 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Mono. Warm white, near-black and warm grays, with no accent color: the
+ * primary action is black, and color is kept for errors. Colors are OKLCH
+ * channels stored as "L C H" so Tailwind's /opacity modifiers keep working
+ * (see tailwind.config.js). Dark follows the system setting.
+ */
 :root {
-  /* Light theme only. Slate neutrals + hitam primary.
-     Colors are OKLCH channels stored as "L C H" so Tailwind's /opacity
-     modifiers keep working (see tailwind.config.js). */
-  --color-bg: 0.984 0.003 247.858; /* slate-50 */
-  --color-surface: 1 0 0; /* white */
-  --color-surface-2: 0.968 0.007 247.896; /* slate-100 */
-  --color-border: 0.929 0.013 255.508; /* slate-200 */
-  --color-text: 0.208 0.042 265.755; /* slate-900 */
-  --color-muted: 0.554 0.046 257.417; /* slate-500 */
-  --color-faint: 0.704 0.04 256.788; /* slate-400 */
-  --color-primary: 0.185 0.004 196; /* hitam #0E1111 */
-  --color-primary-hover: 0.274 0.006 286.033; /* zinc-800 (subtle lift on hover) */
-  --color-primary-fg: 1 0 0; /* white */
-  --color-success: 0.527 0.154 150.069; /* green-700 */
-  --color-danger: 0.577 0.245 27.325; /* red-600 */
-
-  /* shadcn/ui roles, mapped onto the tokens above. */
-  --background: var(--color-bg);
-  --foreground: var(--color-text);
-  --card: var(--color-surface);
-  --card-foreground: var(--color-text);
-  --popover: var(--color-surface);
-  --popover-foreground: var(--color-text);
-  --primary: var(--color-primary);
-  --primary-foreground: var(--color-primary-fg);
-  --secondary: var(--color-surface-2);
-  --secondary-foreground: var(--color-text);
-  --muted: var(--color-surface-2);
-  --muted-foreground: var(--color-muted);
-  --accent: var(--color-surface-2);
-  --accent-foreground: var(--color-text);
-  --destructive: var(--color-danger);
-  --destructive-foreground: 1 0 0;
-  --border: var(--color-border);
-  /* Input boundary: slate-200 would be 1.2:1 on the page, this is 3:1. */
-  --input: 0.65 0.043 257;
-  --ring: var(--color-primary);
-  /* Control radius (12px). Only shadcn's calc() offsets read it; the Tailwind
-     rounded-* scale stays at its defaults. */
+  --background: 0.985 0.001 106; /* #fafaf9 */
+  --foreground: 0.216 0.006 56; /* #1c1917 */
+  --card: 1 0 0;
+  --card-foreground: var(--foreground);
+  --popover: 1 0 0;
+  --popover-foreground: var(--foreground);
+  --primary: var(--foreground);
+  --primary-foreground: 0.985 0.001 106;
+  --secondary: 0.97 0.001 106; /* #f5f5f4 */
+  --secondary-foreground: var(--foreground);
+  --muted: 0.97 0.001 106;
+  --muted-foreground: 0.553 0.013 58; /* #78716c */
+  --accent: 0.94 0.003 56;
+  --accent-foreground: var(--foreground);
+  --destructive: 0.577 0.245 27;
+  --destructive-foreground: 0.985 0.001 106;
+  --border: 0.923 0.003 49; /* #e7e5e4 */
+  /* Control edges sit at 3:1 against the card, unlike the softer --border. */
+  --input: 0.64 0.01 56;
+  --ring: var(--foreground);
   --radius: 0.75rem;
 
-  /* Motion tokens. One easing + duration scale so every transition and
-     entrance shares the same rhythm. */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-fast: 150ms;
+  /* Motion: one strong ease-out for everything that enters or responds. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-fast: 140ms;
   --duration-base: 220ms;
+
+  color-scheme: light;
 }
 
-/* The dark panel (the result card). Not a site-wide dark mode: the class only
-   scopes a dark surface, so its shadcn components pick up these roles. Same
-   slate family as the light theme. */
-.dark {
-  --background: 0.129 0.042 264.695; /* slate-950 */
-  --foreground: 0.984 0.003 247.858; /* slate-50 */
-  --card: 0.208 0.042 265.755; /* slate-900 */
-  --card-foreground: 0.984 0.003 247.858;
-  --popover: 0.208 0.042 265.755;
-  --popover-foreground: 0.984 0.003 247.858;
-  --primary: 0.984 0.003 247.858;
-  --primary-foreground: 0.208 0.042 265.755;
-  --secondary: 0.279 0.041 260.031; /* slate-800 */
-  --secondary-foreground: 0.984 0.003 247.858;
-  --muted: 0.279 0.041 260.031;
-  --muted-foreground: 0.704 0.04 256.788; /* slate-400 */
-  --accent: 0.279 0.041 260.031;
-  --accent-foreground: 0.984 0.003 247.858;
-  --destructive: 0.704 0.191 22.216; /* red-400 */
-  --destructive-foreground: 0.984 0.003 247.858;
-  --border: 0.279 0.041 260.031;
-  --input: 0.372 0.044 257.287; /* slate-700 */
-  --ring: 0.704 0.04 256.788;
-  color-scheme: dark;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 0.147 0.004 49; /* #0c0a09 */
+    --foreground: 0.985 0.001 106;
+    --card: 0.216 0.006 56; /* #1c1917 */
+    --popover: 0.216 0.006 56;
+    --primary-foreground: 0.216 0.006 56;
+    --secondary: 0.268 0.007 34; /* #292524 */
+    --muted: 0.268 0.007 34;
+    --muted-foreground: 0.709 0.01 56; /* #a8a29e */
+    --accent: 0.29 0.007 34;
+    --destructive: 0.704 0.191 22;
+    --destructive-foreground: 0.216 0.006 56;
+    --border: 0.268 0.007 34;
+    --input: 0.5 0.01 56;
+
+    color-scheme: dark;
+  }
 }
 
 @layer base {
@@ -85,40 +67,88 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-color: oklch(var(--foreground) / 0.25) transparent;
   }
 
   body {
-    @apply bg-bg text-content antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
     min-height: 100dvh;
     text-rendering: optimizeLegibility;
   }
 
-  ::selection {
-    background-color: oklch(var(--color-primary) / 0.18);
+  /* Controls fire on tap without the double-tap wait, and a long press
+     doesn't select their labels. Content text stays selectable. */
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="combobox"] {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
-  /* The near-black highlight above disappears on the dark panel. */
-  .dark ::selection {
-    background-color: oklch(var(--foreground) / 0.25);
+  a {
+    touch-action: manipulation;
+  }
+
+  ::selection {
+    background-color: oklch(var(--foreground) / 0.15);
+  }
+
+  /* Every number on the site lines up, not just the NIK readouts. */
+  table,
+  dd,
+  kbd,
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline-color: oklch(var(--ring));
   }
 }
 
 @layer utilities {
-  /* Tabular figures keep the 16-digit NIK readouts from shifting width */
-  .tabular {
-    font-variant-numeric: tabular-nums;
+  /* The one focus ring for links and custom controls; buttons use the same. */
+  .focus-ring {
+    @apply outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
   }
 }
 
+/*
+ * Reduced motion keeps the fades that explain a change and drops the movement:
+ * entrances become plain fades with no stagger, popovers stop zooming,
+ * accordions open at once, and transforms (press scale, bar fills) snap.
+ */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-rise-in,
+  .animate-swap-in {
+    animation-name: fade !important;
+    animation-delay: 0ms !important;
+  }
+
+  [data-state] {
+    --tw-enter-scale: 1 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+  }
+
+  .animate-accordion-down {
+    animation: none !important;
+  }
+
   *,
   ::before,
   ::after {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
-    scroll-behavior: auto !important;
+    transition-property: color, background-color, border-color, opacity,
+      box-shadow !important;
   }
 }

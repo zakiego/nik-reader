@@ -2,50 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import {
-  ArrowDownIcon,
-  CheckIcon,
-  CircleAlertIcon,
-  CopyIcon,
-  IdCardIcon,
-  RotateCcwIcon,
-  SearchIcon,
-  XIcon,
-} from "lucide-react";
-import {
-  type ReactNode,
-  type RefObject,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { Controller, useForm } from "react-hook-form";
+import { CheckIcon, CopyIcon, RotateCcwIcon, XIcon } from "lucide-react";
+import { type RefObject, useEffect, useRef, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "~/components/ui/empty";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "~/components/ui/field";
+import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
@@ -56,14 +18,13 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { Spinner } from "~/components/ui/spinner";
 import { track } from "~/lib/analytics";
+import { copyText } from "~/lib/clipboard";
 import { NIK_LENGTH } from "~/lib/const";
-import { type NikInput, nikSchema } from "~/lib/nik-schema";
+import { type NikInput as NikValues, nikSchema } from "~/lib/nik-schema";
+import { splitNik } from "~/lib/nik-segments";
 import { cn } from "~/lib/utils";
 import { getBirthDateDetails } from "~/utils/extract";
 import { type ExtractedNik, extractDataFromNIK } from "~/utils/read";
-
-/** Id of the NIK anatomy explainer that sits below the tool on every page using it. */
-const ANATOMY_ID = "arti-digit-nik";
 
 /** KTP is issued at 17, so a younger 2000s reading is worth a second look. */
 const KTP_AGE = 17;
@@ -74,19 +35,46 @@ const KTP_AGE = 17;
  */
 const LOADING_DELAY_MS = 150;
 
+const onlyDigits = (text: string) =>
+  text.replace(/\D/g, "").slice(0, NIK_LENGTH);
+
 export const Read = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const form = useForm<NikInput>({
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const form = useForm<NikValues>({
     resolver: zodResolver(nikSchema),
     defaultValues: { nik: "" },
-    mode: "onTouched",
   });
+
+  /**
+   * On a phone the result lands below the fold, often under the keyboard. When
+   * it does, the heading takes focus (closing the keyboard) and scrolls up.
+   */
+  const revealResult = () => {
+    requestAnimationFrame(() => {
+      const heading = headingRef.current;
+      if (!heading) return;
+      const viewport = window.visualViewport;
+      const bottom = viewport
+        ? viewport.offsetTop + viewport.height
+        : window.innerHeight;
+      if (heading.getBoundingClientRect().top < bottom - 120) return;
+      heading.focus({ preventScroll: true });
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      heading.scrollIntoView({
+        block: "start",
+        behavior: reduce ? "auto" : "smooth",
+      });
+    });
+  };
 
   // Reading a NIK is a pure lookup, so it runs here in the browser. The region
   // datasets it needs arrive as a lazy chunk on first read; keeping this off the
   // server is what stops every read from costing a Pages Function invocation.
   const readNIK = useMutation({
-    mutationFn: (values: NikInput) => extractDataFromNIK(values.nik),
+    mutationFn: (values: NikValues) => extractDataFromNIK(values.nik),
     // Analytics gets the names of the fields that didn't decode, never the
     // decoded values, so a stale region dataset shows up without the NIK.
     onSuccess: (result) => {
@@ -100,10 +88,25 @@ export const Read = () => {
         error: error instanceof Error ? error.name : "unknown",
       });
     },
+    onSettled: revealResult,
   });
 
   const isLoading = useDelayedFlag(readNIK.isLoading, LOADING_DELAY_MS);
   const readNik = readNIK.variables?.nik;
+  const value = useWatch({ control: form.control, name: "nik" });
+
+  // The 16th digit reads the NIK, typed or pasted. A failed read waits for
+  // "Coba lagi" instead of looping.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only a new complete value should trigger a read
+  useEffect(() => {
+    if (
+      value.length === NIK_LENGTH &&
+      value !== readNik &&
+      !readNIK.isLoading
+    ) {
+      readNIK.mutate({ nik: value });
+    }
+  }, [value]);
 
   const onSubmit = form.handleSubmit(
     (values) => {
@@ -112,404 +115,295 @@ export const Read = () => {
     () => inputRef.current?.focus(),
   );
 
+  const setNik = (digits: string) => {
+    form.setValue("nik", digits, {
+      shouldValidate: form.formState.isSubmitted,
+    });
+    // A result for a different NIK is stale, so drop it.
+    if (readNik !== undefined && digits !== readNik) readNIK.reset();
+  };
+
   const clearAll = () => {
     readNIK.reset();
     form.reset({ nik: "" });
     inputRef.current?.focus();
   };
 
+  const hasResult = !!readNIK.data && !!readNik && !isLoading;
+  const showResult = isLoading || readNIK.isError || hasResult;
+
   return (
-    <div className="mt-8 [-webkit-tap-highlight-color:transparent]">
-      <form onSubmit={onSubmit} noValidate>
-        <FieldGroup className="gap-4">
-          <Controller
-            name="nik"
-            control={form.control}
-            render={({ field, fieldState, formState }) => {
-              const length = field.value.length;
-              const remaining = NIK_LENGTH - length;
-              const isComplete = length === NIK_LENGTH;
-              // Stay quiet while the field is empty and no submit happened,
-              // so tabbing past it doesn't shout.
-              const showError =
-                fieldState.invalid && (length > 0 || formState.isSubmitted);
-
-              return (
-                <Field data-invalid={showError || undefined}>
-                  <FieldLabel htmlFor="nik-input">
-                    Nomor Induk Kependudukan
-                  </FieldLabel>
-                  <InputGroup className="h-12 bg-card">
-                    <InputGroupInput
-                      {...field}
-                      ref={(element) => {
-                        field.ref(element);
-                        inputRef.current = element;
-                      }}
-                      id="nik-input"
-                      type="text"
-                      inputMode="numeric"
-                      enterKeyHint="search"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                      placeholder="16 digit NIK"
-                      aria-invalid={showError}
-                      aria-describedby="nik-hint"
-                      readOnly={readNIK.isLoading}
-                      className="tabular h-full pl-4 font-mono text-base tracking-[0.06em] text-foreground placeholder:font-sans placeholder:tracking-normal min-[360px]:text-lg min-[360px]:tracking-[0.18em] md:text-lg"
-                      onChange={(event) => {
-                        // Strip spaces and dashes before trimming to 16, so a
-                        // pasted "3204 2145 0190 0001" keeps all its digits.
-                        const digits = event.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, NIK_LENGTH);
-                        field.onChange(digits);
-                        // A result for a different NIK is stale, so drop it.
-                        if (readNik !== undefined && digits !== readNik) {
-                          readNIK.reset();
-                        }
-                      }}
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupText
-                        aria-hidden="true"
-                        className={cn(
-                          "tabular font-mono text-xs",
-                          isComplete && "text-success",
-                        )}
-                      >
-                        {length}/{NIK_LENGTH}
-                      </InputGroupText>
-                      {length > 0 && (
-                        <InputGroupButton
-                          size="icon-sm"
-                          className="relative after:absolute after:-inset-1.5"
-                          aria-label="Kosongkan NIK"
-                          onClick={clearAll}
-                        >
-                          <XIcon />
-                        </InputGroupButton>
-                      )}
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {showError ? (
-                    <FieldError id="nik-hint" role={undefined}>
-                      {length === 0
-                        ? "Masukkan 16 digit NIK dulu."
-                        : `NIK harus 16 digit, kurang ${remaining} lagi.`}
-                    </FieldError>
-                  ) : (
-                    <FieldDescription id="nik-hint">
-                      {isComplete
-                        ? "Lengkap. Tekan Baca NIK."
-                        : length > 0
-                          ? `Kurang ${remaining} digit lagi.`
-                          : "Ketik atau tempel NIK. Spasi dan tanda baca dibuang otomatis."}
-                    </FieldDescription>
+    <div className="flex flex-col gap-8">
+      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-3">
+        <Controller
+          name="nik"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field
+              data-invalid={fieldState.invalid || undefined}
+              className="gap-2"
+            >
+              <FieldLabel htmlFor="nik-input">NIK</FieldLabel>
+              <InputGroup className="h-12 bg-card">
+                <InputGroupInput
+                  ref={(element) => {
+                    field.ref(element);
+                    inputRef.current = element;
+                  }}
+                  id="nik-input"
+                  name={field.name}
+                  value={field.value}
+                  onBlur={field.onBlur}
+                  onChange={(event) => setNik(onlyDigits(event.target.value))}
+                  // A whole NIK pasted into a half-typed field replaces it
+                  // instead of being glued onto the end.
+                  onPaste={(event) => {
+                    const pasted = onlyDigits(
+                      event.clipboardData.getData("text"),
+                    );
+                    if (pasted.length === NIK_LENGTH) {
+                      event.preventDefault();
+                      setNik(pasted);
+                    }
+                  }}
+                  type="text"
+                  inputMode="numeric"
+                  enterKeyHint="search"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  placeholder="16 digit NIK"
+                  aria-invalid={fieldState.invalid}
+                  aria-describedby={
+                    fieldState.invalid ? "nik-error" : undefined
+                  }
+                  readOnly={readNIK.isLoading}
+                  className="h-full pl-4 font-mono text-base tracking-wider placeholder:font-sans placeholder:tracking-normal md:text-lg"
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText
+                    aria-hidden="true"
+                    className="font-mono text-xs"
+                  >
+                    {field.value.length}/{NIK_LENGTH}
+                  </InputGroupText>
+                  {field.value.length > 0 && (
+                    <InputGroupButton
+                      size="icon-sm"
+                      aria-label="Hapus NIK"
+                      onClick={clearAll}
+                    >
+                      <XIcon />
+                    </InputGroupButton>
                   )}
-                </Field>
-              );
-            }}
-          />
-
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            // aria-disabled, not disabled: disabling the focused button would
-            // drop keyboard focus to <body> right as the result lands.
-            aria-disabled={readNIK.isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Spinner aria-hidden="true" />
-                Membaca…
-              </>
-            ) : (
-              <>
-                <SearchIcon aria-hidden="true" />
-                Baca NIK
-              </>
-            )}
-          </Button>
-        </FieldGroup>
+                </InputGroupAddon>
+              </InputGroup>
+              {fieldState.invalid && (
+                <FieldError id="nik-error" role={undefined}>
+                  NIK harus 16 digit.
+                </FieldError>
+              )}
+            </Field>
+          )}
+        />
+        <Button
+          type="submit"
+          size="lg"
+          // aria-disabled, not disabled: disabling the focused button would
+          // drop keyboard focus to <body> right as the result lands.
+          aria-disabled={readNIK.isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Spinner aria-hidden="true" />
+              Membaca…
+            </>
+          ) : (
+            "Baca NIK"
+          )}
+        </Button>
       </form>
 
-      <ResultCard
-        nik={readNik}
-        data={readNIK.data}
-        isLoading={isLoading}
-        isError={readNIK.isError}
-        onRetry={() => readNik && readNIK.mutate({ nik: readNik })}
-        onReset={clearAll}
+      {/* Always rendered, so screen readers hear one short line per read. */}
+      <p role="status" className="sr-only">
+        {isLoading
+          ? "Membaca NIK…"
+          : hasResult && readNik
+            ? `Hasil untuk NIK ${splitNik(readNik)} sudah tampil.`
+            : readNIK.isError
+              ? "Gagal membaca NIK."
+              : ""}
+      </p>
+
+      {showResult && (
+        <section aria-labelledby="result-heading" aria-busy={isLoading}>
+          <h2
+            ref={headingRef}
+            id="result-heading"
+            tabIndex={-1}
+            className="scroll-mt-4 text-sm font-medium text-muted-foreground focus:outline-none"
+          >
+            Hasil
+          </h2>
+          <div className="mt-2">
+            {isLoading ? (
+              <ResultSkeleton />
+            ) : readNIK.isError ? (
+              <Alert variant="destructive">
+                <AlertTitle>Gagal memuat data wilayah</AlertTitle>
+                <AlertDescription className="flex flex-col items-start gap-3">
+                  Cek koneksi, lalu coba lagi.
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => readNik && readNIK.mutate({ nik: readNik })}
+                  >
+                    <RotateCcwIcon aria-hidden="true" />
+                    Coba lagi
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : hasResult && readNik && readNIK.data ? (
+              <Result key={readNik} nik={readNik} data={readNIK.data} />
+            ) : null}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+};
+
+type Row = {
+  label: string;
+  value: string | null;
+  missing: string;
+  /** Short note under the value. */
+  note?: string;
+  /** The digits the value comes from. */
+  digits: string;
+};
+
+const buildRows = (nik: string, data: ExtractedNik): Row[] => {
+  const birth = getBirthDateDetails({ idBirthDate: nik.substring(6, 12) });
+
+  return [
+    {
+      label: "Provinsi",
+      value: data.provinsi,
+      missing: "Tidak dikenal",
+      digits: nik.substring(0, 2),
+    },
+    {
+      label: "Kabupaten/Kota",
+      value: data.kabupaten,
+      missing: "Tidak dikenal",
+      digits: nik.substring(2, 4),
+    },
+    {
+      label: "Kecamatan",
+      value: data.kecamatan,
+      missing: "Tidak dikenal",
+      digits: nik.substring(4, 6),
+    },
+    {
+      label: "Jenis kelamin",
+      // Gender lives in the birth day, so a day that isn't a date says nothing.
+      // getGender prefixes ♂/♀ for the API; the row shows the word only.
+      value: birth ? data.gender?.replace(/^[♂♀]\s*/, "") ?? null : null,
+      missing: "Tidak valid",
+      digits: nik.substring(6, 8),
+    },
+    {
+      label: "Tanggal lahir",
+      value: birth
+        ? `${format(birth.date, "d MMMM yyyy", { locale: idLocale })} (${
+            birth.age
+          } tahun)`
+        : null,
+      missing: "Tidak valid",
+      note:
+        birth?.otherCenturyYear && birth.age < KTP_AGE
+          ? `Bisa juga ${birth.otherCenturyYear}.`
+          : undefined,
+      digits: nik.substring(6, 12),
+    },
+    {
+      label: "Nomor urut",
+      value: data.uniqueId,
+      missing: "Tidak valid",
+      digits: nik.substring(12),
+    },
+  ];
+};
+
+// Rows land as one quick wave, top to bottom, all within ~290ms.
+const ROW_DELAYS_MS = [0, 20, 35, 48, 58, 66];
+
+const Result = ({ nik, data }: { nik: string; data: ExtractedNik }) => {
+  const listRef = useRef<HTMLDListElement>(null);
+  const rows = buildRows(nik, data);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <dl ref={listRef} className="divide-y border-y">
+        {rows.map((row, index) => (
+          <div
+            key={row.label}
+            className="flex animate-rise-in items-baseline gap-4 py-3"
+            style={{ animationDelay: `${ROW_DELAYS_MS[index]}ms` }}
+          >
+            <dt className="w-28 shrink-0 text-sm text-muted-foreground sm:w-36">
+              {row.label}
+            </dt>
+            <dd className="min-w-0 flex-1">
+              <span
+                className={cn(
+                  "break-words font-medium",
+                  row.value === null && "font-normal text-muted-foreground",
+                )}
+              >
+                {row.value ?? row.missing}
+              </span>
+              {row.note && row.value !== null && (
+                <span className="block text-sm text-muted-foreground">
+                  {row.note}
+                </span>
+              )}
+            </dd>
+            <dd className="shrink-0 font-mono text-sm text-muted-foreground">
+              <span className="sr-only">Digit </span>
+              {row.digits}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <CopyButton
+        selectOnFail={listRef}
+        text={[
+          `NIK: ${nik}`,
+          ...rows.map((row) => `${row.label}: ${row.value ?? row.missing}`),
+        ].join("\n")}
       />
     </div>
   );
 };
 
-const ResultCard = ({
-  nik,
-  data,
-  isLoading,
-  isError,
-  onRetry,
-  onReset,
-}: {
-  nik: string | undefined;
-  data: ExtractedNik | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  onRetry: () => void;
-  onReset: () => void;
-}) => {
-  const hasResult = !!data && !!nik && !isLoading;
-  const rowsRef = useRef<HTMLDListElement>(null);
-
-  // One short, always-rendered status line for screen readers, instead of a
-  // live region that would read out every row.
-  const status = isLoading
-    ? "Membaca NIK…"
-    : hasResult
-      ? `Hasil untuk NIK ${splitNik(nik)} sudah tampil.`
-      : "";
-
-  return (
-    <Card className="dark mt-8 shadow-panel">
-      <p role="status" className="sr-only">
-        {status}
-      </p>
-      <CardHeader className="gap-1 space-y-0 border-b px-6 py-4 sm:px-7">
-        <div className="flex items-center justify-between gap-3">
-          <CardTitle role="heading" aria-level={2} className="text-sm">
-            Detail NIK
-          </CardTitle>
-          {/* Underlined at rest: hover never fires on a phone, so the link
-              needs a cue that doesn't depend on it. */}
-          <Button
-            variant="link"
-            size="sm"
-            className="relative h-auto shrink-0 px-0 text-muted-foreground underline decoration-muted-foreground/50 after:absolute after:-inset-x-2 after:-inset-y-3"
-            asChild
-          >
-            <a href={`#${ANATOMY_ID}`}>
-              Lihat arti tiap digit
-              <ArrowDownIcon aria-hidden="true" />
-            </a>
-          </Button>
-        </div>
-        {hasResult && (
-          <CardDescription
-            key={nik}
-            className="tabular animate-fade font-mono tracking-wider"
-          >
-            {splitNik(nik)}
-          </CardDescription>
-        )}
-      </CardHeader>
-
-      <CardContent aria-busy={isLoading} className="px-6 py-2 sm:px-7">
-        {isLoading ? (
-          <ResultSkeleton />
-        ) : isError ? (
-          <Alert variant="destructive" className="my-4 animate-row-in">
-            <CircleAlertIcon aria-hidden="true" className="size-4" />
-            <AlertTitle>Gagal membaca NIK</AlertTitle>
-            <AlertDescription className="flex flex-col items-start gap-3">
-              Data wilayah tidak termuat. Cek koneksi internet, lalu coba lagi.
-              <Button variant="secondary" size="sm" onClick={onRetry}>
-                <RotateCcwIcon aria-hidden="true" />
-                Coba lagi
-              </Button>
-            </AlertDescription>
-          </Alert>
-        ) : hasResult ? (
-          <ResultRows key={nik} ref={rowsRef} nik={nik} data={data} />
-        ) : (
-          <Empty className="animate-fade gap-4 p-4 md:p-6">
-            <EmptyHeader>
-              <EmptyMedia variant="icon" className="rounded-full">
-                <IdCardIcon aria-hidden="true" />
-              </EmptyMedia>
-              <EmptyTitle className="text-base">
-                Belum ada NIK yang dibaca
-              </EmptyTitle>
-              <EmptyDescription>
-                Ketik atau tempel NIK di atas, lalu tekan Baca NIK. Tiap hasil
-                ditampilkan bersama digit asalnya.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
-      </CardContent>
-
-      {hasResult && (
-        <CardFooter className="animate-fade flex-col gap-2 border-t px-6 py-4 [animation-delay:80ms] min-[360px]:flex-row min-[360px]:flex-wrap sm:px-7">
-          <CopyButton nik={nik} data={data} selectOnFail={rowsRef} />
-          <Button
-            variant="ghost"
-            size="md"
-            className="w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
-            onClick={onReset}
-          >
-            <RotateCcwIcon aria-hidden="true" />
-            Baca NIK lain
-          </Button>
-        </CardFooter>
-      )}
-    </Card>
-  );
-};
-
-type Row = {
-  key: string;
-  label: string;
-  value: string | null;
-  missing: string;
-  meta?: string;
-  /** Digits the value comes from; the part before `newFrom` is dimmed. */
-  digits?: { text: string; newFrom: number };
-  mono?: boolean;
-};
-
-const buildRows = (nik: string, data: ExtractedNik): Row[] => {
-  const dayDigits = nik.substring(6, 8);
-  const rawDay = Number(dayDigits);
-  const isFemale = rawDay > 40;
-  const birth = getBirthDateDetails({ idBirthDate: nik.substring(6, 12) });
-
-  let birthMeta: string | undefined;
-  if (birth) {
-    birthMeta = `${birth.age} tahun`;
-    if (birth.otherCenturyYear && birth.age < KTP_AGE) {
-      birthMeta += `. Bisa juga ${birth.otherCenturyYear}, karena NIK hanya menyimpan 2 digit tahun.`;
-    }
-  }
-
-  return [
-    {
-      key: "provinsi",
-      label: "Provinsi",
-      value: data.provinsi,
-      missing: "Tidak ada di data wilayah",
-      digits: { text: nik.substring(0, 2), newFrom: 0 },
-    },
-    {
-      key: "kabupaten",
-      label: "Kabupaten / Kota",
-      value: data.kabupaten,
-      missing: "Tidak ada di data wilayah",
-      digits: { text: nik.substring(0, 4), newFrom: 2 },
-    },
-    {
-      key: "kecamatan",
-      label: "Kecamatan",
-      value: data.kecamatan,
-      missing: "Tidak ada di data wilayah",
-      digits: { text: nik.substring(0, 6), newFrom: 4 },
-    },
-    {
-      key: "gender",
-      label: "Jenis Kelamin",
-      value: data.gender,
-      missing: "Tidak terbaca",
-      meta: isFemale
-        ? `Tanggal lahir ditambah 40 (${dayDigits} = ${rawDay - 40} + 40).`
-        : "Tanggal lahir ditulis apa adanya.",
-      digits: { text: dayDigits, newFrom: 0 },
-    },
-    {
-      key: "birthDate",
-      label: "Tanggal Lahir",
-      value: birth
-        ? format(birth.date, "d MMMM yyyy", { locale: idLocale })
-        : null,
-      missing: "Tanggal tidak valid",
-      meta: birthMeta,
-      digits: { text: nik.substring(6, 12), newFrom: 0 },
-    },
-    {
-      key: "uniqueId",
-      label: "Nomor Urut",
-      value: data.uniqueId,
-      missing: "Tidak terbaca",
-      meta: "Pembeda orang dengan wilayah dan tanggal lahir yang sama.",
-      digits: { text: nik.substring(12), newFrom: 0 },
-      mono: true,
-    },
-  ];
-};
-
-// Rows enter top to bottom as one wave: the gaps shrink so the tail catches
-// up, and the last row lands by ~300ms.
-const ROW_DELAYS_MS = [0, 25, 45, 60, 70, 80];
-
-const ResultRows = forwardRef<
-  HTMLDListElement,
-  { nik: string; data: ExtractedNik }
->(({ nik, data }, ref) => (
-  <dl ref={ref} className="divide-y">
-    {buildRows(nik, data).map((row, index) => (
-      <div
-        key={row.key}
-        className="animate-row-in py-3.5"
-        style={{ animationDelay: `${ROW_DELAYS_MS[index] ?? 80}ms` }}
-      >
-        <dt className="flex items-center justify-between gap-3 text-xs font-medium text-muted-foreground">
-          {row.label}
-          {row.digits && <DigitsBadge {...row.digits} />}
-        </dt>
-        <dd
-          className={cn(
-            "mt-1 break-words text-[15px] font-medium",
-            row.mono && "tabular font-mono",
-            row.value === null && "text-muted-foreground",
-          )}
-        >
-          {row.value ?? row.missing}
-        </dd>
-        {row.meta && row.value !== null && (
-          <dd className="mt-0.5 text-pretty text-xs text-muted-foreground">
-            {row.meta}
-          </dd>
-        )}
-      </div>
-    ))}
-  </dl>
-));
-ResultRows.displayName = "ResultRows";
-
-const DigitsBadge = ({ text, newFrom }: { text: string; newFrom: number }) => (
-  <Badge
-    variant="outline"
-    className="tabular shrink-0 font-mono font-medium tracking-wider"
-  >
-    {newFrom > 0 && (
-      <span className="text-muted-foreground">{text.slice(0, newFrom)}</span>
-    )}
-    {text.slice(newFrom)}
-  </Badge>
-);
-
 const ResultSkeleton = () => (
-  <div className="divide-y">
-    {["w-40", "w-36", "w-44", "w-28", "w-32", "w-16"].map((width) => (
-      <div key={width} className="py-3.5">
-        <Skeleton className="h-3 w-20" />
-        <Skeleton className={cn("mt-2 h-5", width)} />
+  <div className="divide-y border-y">
+    {["w-28", "w-36", "w-32", "w-24", "w-40", "w-14"].map((width) => (
+      <div key={width} className="flex items-center gap-4 py-3.5">
+        <Skeleton className="h-4 w-28 shrink-0 sm:w-36" />
+        <Skeleton className={cn("h-4", width)} />
       </div>
     ))}
   </div>
 );
 
 const CopyButton = ({
-  nik,
-  data,
+  text,
   selectOnFail,
 }: {
-  nik: string;
-  data: ExtractedNik;
+  text: string;
   /** Selected when copying fails, so the text can be copied by hand. */
   selectOnFail: RefObject<HTMLElement>;
 }) => {
@@ -522,114 +416,46 @@ const CopyButton = ({
   }, [state]);
 
   const copy = async () => {
-    const text = [
-      `NIK: ${nik}`,
-      ...buildRows(nik, data).map(
-        (row) => `${row.label}: ${row.value ?? row.missing}`,
-      ),
-    ].join("\n");
-
     if (await copyText(text)) {
       setState("copied");
       track("nik-copy");
       return;
     }
-
     if (selectOnFail.current) {
       window.getSelection()?.selectAllChildren(selectOnFail.current);
     }
     setState("failed");
   };
 
-  const labels: Record<typeof state, ReactNode> = {
-    idle: (
-      <>
-        <CopyIcon aria-hidden="true" />
-        Salin hasil
-      </>
-    ),
-    copied: (
-      <>
-        <CheckIcon aria-hidden="true" />
-        Tersalin
-      </>
-    ),
-    failed: (
-      <>
-        <CopyIcon aria-hidden="true" />
-        Coba salin lagi
-      </>
-    ),
-  };
-
   return (
-    <>
-      <Button
-        variant="secondary"
-        size="md"
-        className="w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
-        onClick={copy}
-      >
+    <div className="flex flex-col items-start gap-2">
+      <Button variant="outline" size="sm" onClick={copy}>
         {/* Keyed so each state swap replays the entrance. */}
         <span key={state} className="flex animate-swap-in items-center gap-2">
-          {labels[state]}
+          {state === "copied" ? (
+            <CheckIcon aria-hidden="true" />
+          ) : (
+            <CopyIcon aria-hidden="true" />
+          )}
+          {state === "copied" ? "Tersalin" : "Salin hasil"}
         </span>
       </Button>
-      {/* Always rendered so screen readers pick up changes; only the failure
-          note is visible. */}
+      {/* Always rendered so screen readers pick up changes. */}
       <p
         role="status"
         className={cn(
-          state === "failed"
-            ? "order-last w-full text-xs text-muted-foreground"
-            : "sr-only",
+          state === "failed" ? "text-sm text-muted-foreground" : "sr-only",
         )}
       >
         {state === "failed"
-          ? "Browser ini tidak mengizinkan menyalin otomatis. Teks hasil sudah dipilih, salin secara manual."
+          ? "Gagal menyalin. Teks sudah dipilih, salin manual."
           : state === "copied"
             ? "Hasil tersalin."
             : ""}
       </p>
-    </>
+    </div>
   );
 };
-
-/**
- * Clipboard API first, then the old execCommand route, which still works in
- * some in-app browsers that block the API. False when both fail.
- */
-const copyText = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.setAttribute("readonly", "");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      return document.execCommand("copy");
-    } catch {
-      return false;
-    } finally {
-      textarea.remove();
-    }
-  }
-};
-
-/** "6371015203950001" -> "63 71 01 520395 0001", split by meaning. */
-const splitNik = (nik: string) =>
-  [
-    nik.substring(0, 2),
-    nik.substring(2, 4),
-    nik.substring(4, 6),
-    nik.substring(6, 12),
-    nik.substring(12),
-  ].join(" ");
 
 /** `value`, but only once it has stayed true for `delay` ms. */
 const useDelayedFlag = (value: boolean, delay: number) => {

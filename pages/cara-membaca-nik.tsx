@@ -53,6 +53,8 @@ export default function CaraMembacaNik() {
         titleFull={meta.seoTitle}
         description={meta.description}
         path={meta.path}
+        ogImage={meta.ogImage}
+        ogHeading={meta.h1}
       />
       <JsonLd
         data={graph(
@@ -67,13 +69,9 @@ export default function CaraMembacaNik() {
       />
 
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
-        <PageHero
-          title={meta.h1}
-          lead="Pahami arti setiap bagian dari 16 digit Nomor Induk Kependudukan, dari kode wilayah sampai tanggal lahir dan jenis kelamin."
-          className="mt-5"
-        />
+        <PageHero title={meta.h1} lead="Arti tiap bagian dari 16 digit NIK." />
 
-        <ContentSection title="Apa itu NIK?" className="mt-10">
+        <ContentSection title="Apa itu NIK?">
           <p>
             NIK atau Nomor Induk Kependudukan adalah nomor identitas tunggal
             setiap penduduk Indonesia. Nomor ini terdiri dari 16 digit,
@@ -97,7 +95,7 @@ export default function CaraMembacaNik() {
             Enam digit pertama adalah kode wilayah tempat NIK diterbitkan,
             mengikuti data wilayah administratif:
           </p>
-          <ul className="list-disc space-y-1.5 pl-5 marker:text-faint">
+          <ul>
             <li>Digit 1-2: kode provinsi.</li>
             <li>Digit 3-4: kode kabupaten atau kota.</li>
             <li>Digit 5-6: kode kecamatan.</li>
@@ -115,18 +113,13 @@ export default function CaraMembacaNik() {
             tanggal-bulan-tahun (DDMMYY). Di sinilah jenis kelamin ikut
             tersimpan:
           </p>
-          <ul className="list-disc space-y-1.5 pl-5 marker:text-faint">
+          <ul>
             <li>Laki-laki: tanggal ditulis apa adanya (01-31).</li>
             <li>Perempuan: tanggal ditambah 40 (41-71).</li>
           </ul>
           <p>
             Pelajari lebih detail di halaman{" "}
-            <Link
-              href={ROUTES.birthDate.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cek tanggal lahir dari NIK
-            </Link>
+            <Link href={ROUTES.birthDate.path}>cek tanggal lahir dari NIK</Link>
             .
           </p>
         </ContentSection>
@@ -150,20 +143,8 @@ export default function CaraMembacaNik() {
           </p>
           <p>
             Sudah paham strukturnya? Coba langsung{" "}
-            <Link
-              href={ROUTES.home.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cek NIK
-            </Link>{" "}
-            atau{" "}
-            <Link
-              href={ROUTES.generator.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              buat contoh NIK
-            </Link>{" "}
-            sendiri.
+            <Link href={ROUTES.home.path}>cek NIK</Link> atau{" "}
+            <Link href={ROUTES.generator.path}>buat contoh NIK</Link> sendiri.
           </p>
         </ContentSection>
 

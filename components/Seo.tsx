@@ -9,6 +9,10 @@ interface Props {
   description?: string;
   /** Path portion of the canonical URL, e.g. "/" or "/nik-generator". */
   path?: string;
+  /** Path of this page's Open Graph card, e.g. "/og/generator.png". */
+  ogImage?: string;
+  /** The heading printed on that card, for its alt text. */
+  ogHeading?: string;
   noindex?: boolean;
 }
 
@@ -17,14 +21,18 @@ export const Seo = ({
   titleFull,
   description,
   path = "/",
+  ogImage: ogImagePath = "/og.png",
+  ogHeading,
   noindex,
 }: Props) => {
   const pageTitle =
     titleFull ?? (title ? `${title} · ${SITE.name}` : SITE.title);
   const desc = description ?? SITE.description;
   const url = `${SITE.url}${path}`;
-  const ogImage = `${SITE.url}/og.png`;
-  const ogAlt = `${SITE.name} · ${SITE.tagline}`;
+  const ogImage = `${SITE.url}${ogImagePath}`;
+  const ogAlt = `${SITE.name}: ${
+    ogHeading ?? SITE.tagline
+  }. Contoh 16 digit NIK yang dibagi per bagian.`;
 
   return (
     <Head>

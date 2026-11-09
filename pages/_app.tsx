@@ -1,27 +1,41 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
-import { Inter } from "next/font/google";
+import { JetBrains_Mono, Public_Sans } from "next/font/google";
 import { useState } from "react";
 import "~/styles/globals.css";
 
-const inter = Inter({
+// Public Sans for the interface and prose: a plain, civic face that reads
+// well at small sizes. JetBrains Mono for every digit, because it keeps 0/O
+// and 1/l apart and its figures are all the same width.
+const sans = Public_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-sans",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  // React Query used to arrive through tRPC's `withTRPC`. Nothing calls tRPC any
-  // more, but the NIK reader and the region dropdowns still use the query cache,
-  // so the provider is now set up directly. Holding the client in state keeps a
-  // re-render from swapping it out and dropping the cache with it.
+  // The NIK reader and the region dropdowns share this query cache. Holding the
+  // client in state keeps a re-render from swapping it out and dropping the
+  // cache with it.
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className={`${inter.variable} font-sans`}>
-        <Component {...pageProps} />
-      </div>
+      {/* On :root, not a wrapper div: popovers and menus portal to <body>
+          and would otherwise fall back to the browser's serif. */}
+      <style jsx global>{`
+        :root {
+          --font-sans: ${sans.style.fontFamily};
+          --font-mono: ${mono.style.fontFamily};
+        }
+      `}</style>
+      <Component {...pageProps} />
     </QueryClientProvider>
   );
 }

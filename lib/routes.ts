@@ -3,7 +3,7 @@
  * internal "related pages" links, breadcrumbs, and per-page SEO metadata so
  * every surface stays in sync from a single source of truth.
  */
-export type IconKey = "search" | "calendar" | "sparkles" | "book";
+export type IconKey = "search" | "calendar" | "generate" | "book";
 
 export interface RouteMeta {
   /** Path portion of the URL, e.g. "/" or "/nik-generator". */
@@ -16,12 +16,14 @@ export interface RouteMeta {
   description: string;
   /** Short label used for internal links and breadcrumbs. */
   navLabel: string;
-  /** Compact label used in the top navigation pills. */
+  /** Compact label used in the header and footer navigation. */
   navShort: string;
   /** One-line blurb shown on related-page cards. */
   navBlurb: string;
-  /** Icon shown on nav feature cards (resolved in the UI layer). */
+  /** Icon shown next to related-page links (resolved in the UI layer). */
   iconKey: IconKey;
+  /** Open Graph card, built by scripts/og/generate.sh. */
+  ogImage: string;
   /** Sitemap hints. */
   priority: number;
   changefreq: "daily" | "weekly" | "monthly";
@@ -38,6 +40,7 @@ export const ROUTES = {
     navShort: "Cek NIK",
     navBlurb: "Baca & cek detail dari 16 digit NIK KTP.",
     iconKey: "search",
+    ogImage: "/og/home.png",
     priority: 1.0,
     changefreq: "weekly",
   },
@@ -48,9 +51,10 @@ export const ROUTES = {
     description:
       "Cara cek tanggal lahir dari NIK online. Baca tanggal lahir dari 16 digit NIK KTP, termasuk aturan +40 untuk perempuan. Gratis dan langsung di browser.",
     navLabel: "Tanggal Lahir dari NIK",
-    navShort: "Tanggal Lahir",
+    navShort: "Tanggal lahir",
     navBlurb: "Lihat tanggal lahir dari NIK, termasuk aturan perempuan.",
     iconKey: "calendar",
+    ogImage: "/og/tanggal-lahir.png",
     priority: 0.9,
     changefreq: "weekly",
   },
@@ -63,7 +67,8 @@ export const ROUTES = {
     navLabel: "Generator NIK",
     navShort: "Generator",
     navBlurb: "Buat contoh NIK acak untuk testing & edukasi.",
-    iconKey: "sparkles",
+    iconKey: "generate",
+    ogImage: "/og/generator.png",
     priority: 0.8,
     changefreq: "weekly",
   },
@@ -77,6 +82,7 @@ export const ROUTES = {
     navShort: "Panduan",
     navBlurb: "Arti tiap bagian dari 16 digit NIK.",
     iconKey: "book",
+    ogImage: "/og/panduan.png",
     priority: 0.7,
     changefreq: "monthly",
   },

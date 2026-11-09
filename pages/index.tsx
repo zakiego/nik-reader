@@ -22,7 +22,7 @@ const meta = ROUTES.home;
 const FAQ: FaqItem[] = [
   {
     q: "Bagaimana cara cek NIK online?",
-    a: "Ketik 16 digit NIK pada kolom di atas, lalu tekan tombol Baca. Detail seperti provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir langsung ditampilkan. Semua proses berjalan di browser kamu.",
+    a: "Ketik atau tempel 16 digit NIK pada kolom di atas. Begitu digit ke-16 masuk, detail seperti provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir langsung ditampilkan. Semua proses berjalan di browser kamu.",
   },
   {
     q: "Apakah cek NIK di sini gratis?",
@@ -53,6 +53,8 @@ export default function Home() {
         titleFull={meta.seoTitle}
         description={meta.description}
         path={meta.path}
+        ogImage={meta.ogImage}
+        ogHeading={meta.h1}
       />
       <JsonLd
         data={graph(
@@ -65,10 +67,9 @@ export default function Home() {
 
       <Layout currentPath={meta.path}>
         <PageHero
-          kicker="Nomor Induk Kependudukan"
           size="lg"
           title={meta.h1}
-          lead="Masukkan 16 digit NIK untuk membaca provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir. Contoh NIK juga dapat dibuat melalui tab Generate."
+          lead="Lihat provinsi, kota, kecamatan, jenis kelamin, dan tanggal lahir dari NIK."
         />
 
         <div className="mt-8">
@@ -76,44 +77,11 @@ export default function Home() {
         </div>
 
         <ContentSection title="Arti 16 digit NIK">
-          <p>
-            Setiap NIK terdiri dari 16 digit yang tidak acak. Angka-angka itu
-            menyimpan kode wilayah, tanggal lahir, jenis kelamin, dan nomor urut
-            pendaftaran. Begini susunannya:
-          </p>
+          <p>16 digit NIK tersusun seperti ini:</p>
           <NikAnatomy />
           <p>
             Penjelasan lengkap tiap bagian ada di panduan{" "}
-            <Link
-              href={ROUTES.guide.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cara membaca NIK
-            </Link>
-            .
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Cara memeriksa NIK">
-          <ol className="list-decimal space-y-2 pl-5 marker:font-medium marker:text-faint">
-            <li>Buka tab Baca, lalu ketik 16 digit NIK pada kolom input.</li>
-            <li>
-              Pastikan jumlah digit sudah 16 (penghitung berubah hijau saat
-              lengkap).
-            </li>
-            <li>
-              Tekan tombol Baca. Detail NIK langsung muncul di kartu hasil.
-            </li>
-          </ol>
-          <p>
-            Ingin fokus ke tanggal lahir? Lihat halaman{" "}
-            <Link
-              href={ROUTES.birthDate.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cek tanggal lahir dari NIK
-            </Link>
-            .
+            <Link href={ROUTES.guide.path}>cara membaca NIK</Link>.
           </p>
         </ContentSection>
 
@@ -122,7 +90,7 @@ export default function Home() {
             NIK memang bisa dibaca strukturnya, tapi ia tidak memuat identitas
             pribadi pemiliknya. Dari nomornya saja, kamu tidak bisa mengetahui:
           </p>
-          <ul className="list-disc space-y-1.5 pl-5 marker:text-faint">
+          <ul>
             <li>Nama pemilik NIK</li>
             <li>Alamat lengkap (jalan, RT/RW, nomor rumah)</li>
             <li>Nomor telepon atau data kontak</li>

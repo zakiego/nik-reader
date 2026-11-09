@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { JsonLd } from "~/components/JsonLd";
 import { Layout } from "~/components/Layout";
+import { ToolPanel } from "~/components/NikTool";
 import { Seo } from "~/components/Seo";
 import { ContentSection } from "~/components/content/ContentSection";
 import { Faq } from "~/components/content/Faq";
@@ -47,7 +48,7 @@ const STEPS: HowToStep[] = [
 const FAQ: FaqItem[] = [
   {
     q: "Bagaimana cara melihat tanggal lahir dari NIK?",
-    a: "Masukkan 16 digit NIK pada kolom di atas dan tekan Baca. Tanggal lahir dihitung otomatis dari digit ke-7 sampai ke-12. Secara manual, ambil 6 angka setelah kode wilayah dan baca sebagai tanggal, bulan, lalu tahun.",
+    a: "Masukkan 16 digit NIK pada kolom di atas. Tanggal lahir dihitung otomatis dari digit ke-7 sampai ke-12. Secara manual, ambil 6 angka setelah kode wilayah dan baca sebagai tanggal, bulan, lalu tahun.",
   },
   {
     q: "Kenapa tanggal lahir di NIK perempuan lebih dari 31?",
@@ -74,6 +75,8 @@ export default function CekTanggalLahirDariNik() {
         titleFull={meta.seoTitle}
         description={meta.description}
         path={meta.path}
+        ogImage={meta.ogImage}
+        ogHeading={meta.h1}
       />
       <JsonLd
         data={graph(
@@ -90,12 +93,13 @@ export default function CekTanggalLahirDariNik() {
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
         <PageHero
           title={meta.h1}
-          lead="Masukkan 16 digit NIK untuk membaca tanggal lahir secara otomatis, lengkap dengan aturan +40 untuk perempuan."
-          className="mt-5"
+          lead="Lihat tanggal lahir dan jenis kelamin dari NIK."
         />
 
         <div className="mt-8">
-          <Read />
+          <ToolPanel>
+            <Read />
+          </ToolPanel>
         </div>
 
         <ContentSection title="Membaca tanggal lahir NIK secara manual">
@@ -103,11 +107,10 @@ export default function CekTanggalLahirDariNik() {
             Tanggal lahir tersembunyi di digit ke-7 sampai ke-12 pada NIK.
             Berikut cara membacanya tanpa alat:
           </p>
-          <ol className="list-decimal space-y-2 pl-5 marker:font-medium marker:text-faint">
+          <ol>
             {STEPS.map((step) => (
               <li key={step.name}>
-                <span className="font-medium text-content">{step.name}.</span>{" "}
-                {step.text}
+                <strong>{step.name}.</strong> {step.text}
               </li>
             ))}
           </ol>
@@ -118,15 +121,14 @@ export default function CekTanggalLahirDariNik() {
             Inilah bagian yang paling sering membingungkan. Pada NIK, dua digit
             tanggal lahir menentukan jenis kelamin:
           </p>
-          <ul className="list-disc space-y-1.5 pl-5 marker:text-faint">
+          <ul>
             <li>
-              <span className="font-medium text-content">Laki-laki:</span>{" "}
-              tanggal ditulis apa adanya, 01 sampai 31.
+              <strong>Laki-laki:</strong> tanggal ditulis apa adanya, 01 sampai
+              31.
             </li>
             <li>
-              <span className="font-medium text-content">Perempuan:</span>{" "}
-              tanggal ditambah 40, jadi 41 sampai 71. Kurangi 40 untuk tanggal
-              aslinya.
+              <strong>Perempuan:</strong> tanggal ditambah 40, jadi 41 sampai
+              71. Kurangi 40 untuk tanggal aslinya.
             </li>
           </ul>
           <p>
@@ -137,19 +139,19 @@ export default function CekTanggalLahirDariNik() {
 
         <ContentSection title="Letak tanggal lahir di dalam NIK">
           <p>
-            Bagian tanggal lahir (disorot hijau) berada tepat setelah kode
-            wilayah:
+            Bagian tanggal lahir, yang disorot di bawah, berada tepat setelah
+            kode wilayah:
           </p>
           <NikAnatomy highlight="birthDate" />
         </ContentSection>
 
         <Faq items={FAQ} />
 
-        <p className="mt-10 text-sm text-muted-foreground">
+        <p className="mt-10 text-base text-muted-foreground">
           Ingin membaca seluruh bagian NIK, bukan cuma tanggal lahir? Gunakan{" "}
           <Link
             href={ROUTES.home.path}
-            className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
+            className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
           >
             alat cek NIK lengkap
           </Link>

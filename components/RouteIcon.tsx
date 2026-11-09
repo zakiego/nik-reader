@@ -1,19 +1,20 @@
 import {
   BookOpenIcon,
   CalendarDaysIcon,
-  MagnifyingGlassIcon,
-  SparklesIcon,
-} from "@heroicons/react/24/outline";
+  IdCardIcon,
+  type LucideIcon,
+  SearchIcon,
+} from "lucide-react";
 import type { IconKey } from "~/lib/routes";
 
-const MAP: Record<IconKey, typeof MagnifyingGlassIcon> = {
-  search: MagnifyingGlassIcon,
+const MAP: Record<IconKey, LucideIcon> = {
+  search: SearchIcon,
   calendar: CalendarDaysIcon,
-  sparkles: SparklesIcon,
+  generate: IdCardIcon,
   book: BookOpenIcon,
 };
 
-/** Resolves a route's iconKey to a heroicon. Keeps icon choice out of lib/. */
+/** Resolves a route's iconKey to an icon. Keeps icon choice out of lib/. */
 export const RouteIcon = ({
   iconKey,
   className,
