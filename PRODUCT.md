@@ -31,7 +31,7 @@ It reads the structure of the number only, in the browser. It never looks up a p
 
 ## Brand Commitments
 
-- Name: NIK Reader. Mark: the ID-card glyph on a KTP-blue tile (`components/site/BrandMark.tsx`, `scripts/generate-icons.py`).
+- Name: NIK Reader. Mark: the ID-card glyph on a near-black tile (`components/site/BrandMark.tsx`, `scripts/generate-icons.py`).
 - Copy is Bahasa Indonesia, informal "kamu".
 - Must not imitate Dukcapil or any government branding.
 
@@ -41,11 +41,11 @@ No testimonials, usage numbers or partners. Don't invent any. The sample NIK (`S
 
 ## Product Principles
 
-1. The NIK is the interface: show the digits in their real groups and tie every answer to its digits.
-2. Privacy is a feature you can see: say where the number goes (nowhere) next to the field.
+1. Keep it simple: one input, one button, short words. Nothing the visitor has to read before using the tool.
+2. Privacy without a lecture: the NIK is never stored or sent, and the site says so in one short line.
 3. Explain, don't verify: never imply a NIK is real, valid or belongs to someone.
 4. A phone with one thumb is the main device.
 
 ## Accessibility & Inclusion
 
-WCAG 2.2 AA. The NIK field is one real input for screen readers; result rows read as a description list; reduced motion keeps fades and drops movement.
+WCAG 2.2 AA. Result rows read as a description list; reduced motion keeps fades and drops movement.
