@@ -52,11 +52,13 @@ export const getBirthDate = ({
     const rawDay = id.substring(0, 2);
     const day = parseInt(rawDay) > 40 ? parseInt(rawDay) - 40 : rawDay;
     const month = id.substring(2, 4);
-    // TODO: im not sure about this to hanle 2 digit year
+    // NIK only stores 2 digits of the year: anything after the current
+    // 2-digit year can't be a birth year yet, so it belongs to the 1900s
+    const currentYear = new Date().getFullYear() % 100;
     const year =
-      parseInt(id.substring(4, 6)) < 22
-        ? `20${id.substring(4, 6)}`
-        : `19${id.substring(4, 6)}`;
+      parseInt(id.substring(4, 6)) > currentYear
+        ? `19${id.substring(4, 6)}`
+        : `20${id.substring(4, 6)}`;
 
     const date = parse(`${day}/${month}/${year}`, "dd/MM/yyyy", new Date());
 
