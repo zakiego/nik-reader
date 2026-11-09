@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import {
+  ArrowDownIcon,
   CheckIcon,
   CircleAlertIcon,
   CopyIcon,
@@ -279,23 +280,33 @@ const ResultCard = ({
       <p role="status" className="sr-only">
         {status}
       </p>
-      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 border-b px-6 py-4 sm:px-7">
-        <div className="flex min-w-0 flex-col gap-1">
+      <CardHeader className="gap-1 space-y-0 border-b px-6 py-4 sm:px-7">
+        <div className="flex items-center justify-between gap-3">
           <CardTitle role="heading" aria-level={2} className="text-sm">
             Detail NIK
           </CardTitle>
-          {hasResult && (
-            <CardDescription
-              key={nik}
-              className="tabular animate-fade font-mono tracking-wider"
-            >
-              {splitNik(nik)}
-            </CardDescription>
-          )}
+          {/* Underlined at rest: hover never fires on a phone, so the link
+              needs a cue that doesn't depend on it. */}
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto shrink-0 px-0 text-muted-foreground underline decoration-muted-foreground/50"
+            asChild
+          >
+            <a href={`#${ANATOMY_ID}`}>
+              Lihat arti tiap digit
+              <ArrowDownIcon aria-hidden="true" />
+            </a>
+          </Button>
         </div>
-        <Button variant="link" size="sm" className="shrink-0 px-0" asChild>
-          <a href={`#${ANATOMY_ID}`}>Lihat arti tiap digit</a>
-        </Button>
+        {hasResult && (
+          <CardDescription
+            key={nik}
+            className="tabular animate-fade font-mono tracking-wider"
+          >
+            {splitNik(nik)}
+          </CardDescription>
+        )}
       </CardHeader>
 
       <CardContent aria-busy={isLoading} className="px-6 py-2 sm:px-7">
@@ -424,6 +435,7 @@ const buildRows = (nik: string, data: ExtractedNik): Row[] => {
       value: data.uniqueId,
       missing: "Tidak terbaca",
       meta: "Pembeda orang dengan wilayah dan tanggal lahir yang sama.",
+      digits: { text: nik.substring(12), newFrom: 0 },
       mono: true,
     },
   ];
