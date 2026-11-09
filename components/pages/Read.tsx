@@ -290,7 +290,7 @@ const ResultCard = ({
           <Button
             variant="link"
             size="sm"
-            className="h-auto shrink-0 px-0 text-muted-foreground underline decoration-muted-foreground/50"
+            className="relative h-auto shrink-0 px-0 text-muted-foreground underline decoration-muted-foreground/50 after:absolute after:-inset-x-2 after:-inset-y-3"
             asChild
           >
             <a href={`#${ANATOMY_ID}`}>
