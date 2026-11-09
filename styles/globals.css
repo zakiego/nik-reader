@@ -3,46 +3,33 @@
 @tailwind utilities;
 
 /*
- * KTP ink. One accent (the blue printed on an e-KTP), cool slate neutrals, and
- * five segment colors that encode what each part of a NIK means. Colors are
- * OKLCH channels stored as "L C H" so Tailwind's /opacity modifiers keep
- * working (see tailwind.config.js). Dark follows the system setting.
+ * Mono. Warm white, near-black and warm grays, with no accent color: the
+ * primary action is black, and color is kept for errors. Colors are OKLCH
+ * channels stored as "L C H" so Tailwind's /opacity modifiers keep working
+ * (see tailwind.config.js). Dark follows the system setting.
  */
 :root {
-  --background: 0.982 0.005 250;
-  --foreground: 0.24 0.035 262;
+  --background: 0.985 0.001 106; /* #fafaf9 */
+  --foreground: 0.216 0.006 56; /* #1c1917 */
   --card: 1 0 0;
   --card-foreground: var(--foreground);
   --popover: 1 0 0;
   --popover-foreground: var(--foreground);
-  --primary: 0.45 0.16 258;
-  --primary-foreground: 0.99 0.003 250;
-  --secondary: 0.955 0.01 252;
+  --primary: var(--foreground);
+  --primary-foreground: 0.985 0.001 106;
+  --secondary: 0.97 0.001 106; /* #f5f5f4 */
   --secondary-foreground: var(--foreground);
-  --muted: 0.955 0.01 252;
-  --muted-foreground: 0.5 0.03 258;
-  --accent: 0.93 0.032 255;
+  --muted: 0.97 0.001 106;
+  --muted-foreground: 0.553 0.013 58; /* #78716c */
+  --accent: 0.94 0.003 56;
   --accent-foreground: var(--foreground);
-  --destructive: 0.55 0.2 27;
-  --destructive-foreground: 0.99 0.003 250;
-  --success: 0.52 0.13 155;
-  --border: 0.91 0.012 252;
+  --destructive: 0.577 0.245 27;
+  --destructive-foreground: 0.985 0.001 106;
+  --border: 0.923 0.003 49; /* #e7e5e4 */
   /* Control edges sit at 3:1 against the card, unlike the softer --border. */
-  --input: 0.64 0.035 256;
-  --ring: var(--primary);
+  --input: 0.64 0.01 56;
+  --ring: var(--foreground);
   --radius: 0.75rem;
-
-  /*
-   * Segment colors. Region is a hierarchy, so it is one hue in three steps
-   * (provinsi deepest). The birth date, which also carries gender, is the one
-   * warm hue. The sequence number can't be decoded, so it stays neutral.
-   * They mark bars, dots and chips only; digits stay in --foreground.
-   */
-  --seg-provinsi: 0.45 0.16 258;
-  --seg-kabupaten: 0.58 0.14 248;
-  --seg-kecamatan: 0.71 0.1 236;
-  --seg-birth: 0.7 0.15 62;
-  --seg-urut: 0.68 0.02 257;
 
   /* Motion: one strong ease-out for everything that enters or responds. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -55,47 +42,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 0.17 0.02 262;
-    --foreground: 0.95 0.008 250;
-    --card: 0.205 0.024 262;
-    --popover: 0.225 0.026 262;
-    --primary: 0.74 0.12 254;
-    --primary-foreground: 0.18 0.03 262;
-    --secondary: 0.26 0.026 262;
-    --muted: 0.26 0.026 262;
-    --muted-foreground: 0.73 0.025 258;
-    --accent: 0.28 0.04 258;
-    --destructive: 0.7 0.17 25;
-    --destructive-foreground: 0.18 0.03 262;
-    --success: 0.76 0.14 155;
-    --border: 0.3 0.025 262;
-    --input: 0.53 0.03 260;
-
-    --seg-provinsi: 0.68 0.15 258;
-    --seg-kabupaten: 0.77 0.11 246;
-    --seg-kecamatan: 0.86 0.07 234;
-    --seg-birth: 0.8 0.14 68;
-    --seg-urut: 0.6 0.02 257;
+    --background: 0.147 0.004 49; /* #0c0a09 */
+    --foreground: 0.985 0.001 106;
+    --card: 0.216 0.006 56; /* #1c1917 */
+    --popover: 0.216 0.006 56;
+    --primary-foreground: 0.216 0.006 56;
+    --secondary: 0.268 0.007 34; /* #292524 */
+    --muted: 0.268 0.007 34;
+    --muted-foreground: 0.709 0.01 56; /* #a8a29e */
+    --accent: 0.29 0.007 34;
+    --destructive: 0.704 0.191 22;
+    --destructive-foreground: 0.216 0.006 56;
+    --border: 0.268 0.007 34;
+    --input: 0.5 0.01 56;
 
     color-scheme: dark;
   }
-}
-
-/* `bg-seg`, `text-seg` and friends read whichever segment the element sits in. */
-[data-seg="provinsi"] {
-  --seg: var(--seg-provinsi);
-}
-[data-seg="kabupaten"] {
-  --seg: var(--seg-kabupaten);
-}
-[data-seg="kecamatan"] {
-  --seg: var(--seg-kecamatan);
-}
-[data-seg="birthDate"] {
-  --seg: var(--seg-birth);
-}
-[data-seg="urut"] {
-  --seg: var(--seg-urut);
 }
 
 @layer base {
@@ -131,12 +93,7 @@
   }
 
   ::selection {
-    background-color: oklch(var(--primary) / 0.2);
-  }
-
-  input,
-  textarea {
-    caret-color: oklch(var(--primary));
+    background-color: oklch(var(--foreground) / 0.15);
   }
 
   /* Every number on the site lines up, not just the NIK readouts. */

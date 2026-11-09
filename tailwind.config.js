@@ -46,12 +46,9 @@ module.exports = {
           DEFAULT: role("destructive"),
           foreground: role("destructive-foreground"),
         },
-        success: role("success"),
         border: role("border"),
         input: role("input"),
         ring: role("ring"),
-        // The segment an element sits in (set by data-seg, see globals.css).
-        seg: role("seg"),
       },
       // One radius scale: 6px chips and slots, 12px controls, 16px panels.
       borderRadius: {

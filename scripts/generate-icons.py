@@ -1,7 +1,7 @@
 """Generate the nik-reader icon set from the navbar logo mark.
 
 The mark is the one rendered in components/site/BrandMark.tsx: a rounded square
-in the KTP-blue primary (--primary, #0850ab) holding a white heroicons
+in the near-black primary (--primary, #1c1917) holding a white heroicons
 IdentificationIcon (24 solid).
 
 The 16px .ico layer does NOT downscale the full glyph — at that size the head,
@@ -25,7 +25,7 @@ GLYPH = (
     "01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15z"
 )
 
-PRIMARY = "#0850ab"  # --primary in styles/globals.css, oklch(0.45 0.16 258)
+PRIMARY = "#1c1917"  # --primary in styles/globals.css (near-black)
 
 
 def full_mark(size: int, radius_ratio: float, glyph_ratio: float) -> str:

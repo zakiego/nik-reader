@@ -12,12 +12,12 @@ export default function Document() {
         <meta
           name="theme-color"
           media="(prefers-color-scheme: light)"
-          content="#f7f9fc"
+          content="#fafaf9"
         />
         <meta
           name="theme-color"
           media="(prefers-color-scheme: dark)"
-          content="#0b0f18"
+          content="#0c0a09"
         />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

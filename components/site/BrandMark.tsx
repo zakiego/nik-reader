@@ -1,7 +1,7 @@
 import { cn } from "~/lib/utils";
 
 /**
- * The NIK Reader mark: an ID card on a KTP-blue tile. Same glyph as
+ * The NIK Reader mark: an ID card on a near-black tile. Same glyph as
  * public/favicon.svg (scripts/generate-icons.py), drawn in the theme colors.
  */
 export const BrandMark = ({ className }: { className?: string }) => (
