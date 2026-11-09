@@ -1,56 +1,43 @@
-import { NIK_LENGTH } from "~/lib/const";
-
 /**
- * The five parts of a NIK, in order. The reader, the generator preview and the
- * explainer all draw from this list, so a digit range or a label can't drift
- * between them. `key` doubles as the `data-seg` value that picks the segment
- * color in styles/globals.css.
+ * The five parts of a NIK, in order. The explainer, the generator preview and
+ * the reader all draw from this list, so a digit range can't drift between
+ * them.
  */
 export const SEGMENTS = [
   {
     key: "provinsi",
-    label: "Provinsi",
-    short: "Prov",
-    name: "Kode provinsi",
+    name: "Provinsi",
     /** Mid-sentence form of `name`. */
-    hint: "kode provinsi",
+    hint: "provinsi",
     start: 0,
     end: 2,
   },
   {
     key: "kabupaten",
-    label: "Kab/Kota",
-    short: "Kab",
-    name: "Kode kabupaten/kota",
+    name: "Kabupaten/kota",
     /** Mid-sentence form of `name`. */
-    hint: "kode kabupaten/kota",
+    hint: "kabupaten/kota",
     start: 2,
     end: 4,
   },
   {
     key: "kecamatan",
-    label: "Kecamatan",
-    short: "Kec",
-    name: "Kode kecamatan",
+    name: "Kecamatan",
     /** Mid-sentence form of `name`. */
-    hint: "kode kecamatan",
+    hint: "kecamatan",
     start: 4,
     end: 6,
   },
   {
     key: "birthDate",
-    label: "Tanggal lahir",
-    short: "Tgl lahir",
-    name: "Tanggal lahir (DDMMYY)",
+    name: "Tanggal lahir",
     /** Mid-sentence form of `name`. */
-    hint: "tanggal lahir (DDMMYY)",
+    hint: "tanggal lahir",
     start: 6,
     end: 12,
   },
   {
     key: "urut",
-    label: "No. urut",
-    short: "Urut",
     name: "Nomor urut",
     /** Mid-sentence form of `name`. */
     hint: "nomor urut",
@@ -64,18 +51,6 @@ export type SegmentKey = Segment["key"];
 
 /** A fictional NIK that decodes fully: Cileunyi, Kab. Bandung, a woman born 5 January 1990. */
 export const SAMPLE_NIK = "3204054501900001";
-
-/** "Digit 7–12", 1-based, for labels. */
-export const digitRange = (segment: Segment) =>
-  segment.end - segment.start === 1
-    ? `Digit ${segment.end}`
-    : `Digit ${segment.start + 1}–${segment.end}`;
-
-/** The segment the next typed digit lands in, or null once all 16 are in. */
-export const segmentAt = (length: number): Segment | null =>
-  length >= NIK_LENGTH
-    ? null
-    : SEGMENTS.find((s) => length >= s.start && length < s.end) ?? null;
 
 /** "3204054501900001" -> "32 04 05 450190 0001", split by meaning. */
 export const splitNik = (nik: string) =>

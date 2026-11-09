@@ -15,8 +15,6 @@ type Events = {
   "nik-read": { missing: string };
   /** Reading threw, most likely because the region chunk failed to load. */
   "nik-read-error": { error: string };
-  /** The reader was filled with the fictional sample NIK. */
-  "nik-sample": undefined;
   /** The generator picked a random region, gender and birth date. */
   "nik-randomize": undefined;
   /** A read result was copied to the clipboard. */

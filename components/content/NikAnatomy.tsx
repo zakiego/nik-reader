@@ -1,67 +1,44 @@
-import { NikReadout } from "~/components/nik/NikDigits";
-import { Card, CardContent } from "~/components/ui/card";
-import {
-  SAMPLE_NIK,
-  SEGMENTS,
-  type SegmentKey,
-  digitRange,
-  splitNik,
-} from "~/lib/nik-segments";
+import { SAMPLE_NIK, SEGMENTS, type SegmentKey } from "~/lib/nik-segments";
 import { cn } from "~/lib/utils";
 
 const MEANING: Record<SegmentKey, string> = {
-  provinsi: "Provinsi tempat NIK diterbitkan.",
-  kabupaten: "Kabupaten atau kota di dalam provinsi itu.",
-  kecamatan: "Kecamatan di dalam kabupaten/kota itu.",
-  birthDate:
-    "Tanggal, bulan dan tahun lahir. Khusus perempuan, tanggalnya ditambah 40, jadi 45 berarti tanggal 5.",
-  urut: "Nomor urut pendaftaran. Ini yang membedakan orang dengan wilayah dan tanggal lahir yang sama, dan tidak bisa ditebak.",
+  provinsi: "Provinsi tempat NIK dibuat.",
+  kabupaten: "Kabupaten atau kota.",
+  kecamatan: "Kecamatan di kabupaten/kota itu.",
+  birthDate: "Format DDMMYY. Perempuan: tanggal ditambah 40 (45 = tanggal 5).",
+  urut: "Nomor urut pendaftaran. Tidak bisa ditebak.",
 };
 
 /**
- * The 16 digits of a NIK taken apart, in the same cells and colors the reader
- * uses. Doubles as indexable content (the "arti 16 digit NIK" queries) and as
- * the target of the reader's "Arti tiap digit" link. The sample is fictional.
+ * The 16 digits of a NIK, part by part, using a fictional sample. Doubles as
+ * indexable content for the "arti 16 digit NIK" queries.
  */
 export const NikAnatomy = ({ highlight }: { highlight?: SegmentKey }) => (
   <div id="arti-digit-nik" className="scroll-mt-6">
-    <Card>
-      <CardContent className="p-4 sm:p-6">
-        <figure className="flex flex-col gap-3">
-          <NikReadout
-            digits={SAMPLE_NIK}
-            label={`Contoh NIK ${splitNik(SAMPLE_NIK)}`}
-            highlight={highlight}
-          />
-          <figcaption className="text-xs text-muted-foreground">
-            Contoh fiktif, bukan NIK asli.
-          </figcaption>
-        </figure>
-      </CardContent>
-    </Card>
-
-    <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+    <p className="font-mono text-lg font-medium tracking-wider">{SAMPLE_NIK}</p>
+    <dl className="mt-3 divide-y border-y">
       {SEGMENTS.map((segment) => (
         <div
           key={segment.key}
-          data-seg={segment.key}
           className={cn(
-            "flex flex-col gap-1",
-            segment.key === "urut" && "sm:col-span-2",
+            "grid grid-cols-[5rem_1fr] gap-x-4 py-3 sm:grid-cols-[6.5rem_1fr]",
+            highlight === segment.key && "-mx-3 rounded-lg bg-muted px-3",
           )}
         >
-          <dt className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <span aria-hidden="true" className="size-2 rounded-sm bg-seg" />
-            {segment.name}
-            <span className="font-mono text-xs font-normal text-muted-foreground">
-              {digitRange(segment)}
-            </span>
+          <dt className="font-mono font-medium tracking-wider">
+            {SAMPLE_NIK.slice(segment.start, segment.end)}
           </dt>
-          <dd className="pl-4 text-sm leading-relaxed text-muted-foreground">
-            {MEANING[segment.key]}
+          <dd>
+            <span className="block font-medium text-foreground">
+              {segment.name}
+            </span>
+            <span className="block text-sm text-muted-foreground">
+              {MEANING[segment.key]}
+            </span>
           </dd>
         </div>
       ))}
     </dl>
+    <p className="mt-2 text-xs text-muted-foreground">Contoh fiktif.</p>
   </div>
 );

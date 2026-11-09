@@ -1,8 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon, RotateCcwIcon, ShuffleIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, ShuffleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { RegionCombobox } from "~/components/form/RegionCombobox";
-import { NikReadout } from "~/components/nik/NikDigits";
 import { Button } from "~/components/ui/button";
 import {
   Field,
@@ -28,7 +27,7 @@ import {
 
 type Gender = (typeof GENDER)[number]["value"];
 
-/** Unknown digits in the preview; NikReadout leaves these cells empty. */
+/** Unknown digits in the preview, shown as a faint dot. */
 const UNKNOWN = "-";
 
 // Region options are resolved in the browser from a lazily loaded chunk, so
@@ -127,7 +126,6 @@ export const Predict = () => {
   const values = { provinsi, kabupaten, kecamatan, gender, birthDate };
   const digits = buildDigits(values);
   const isComplete = !!(kecamatan && gender && birthDate);
-  const isTouched = !!(provinsi || gender || birthDate);
 
   // Count a generated NIK once, when the last field gets filled in, not again
   // on every tweak to a pattern that's already complete.
@@ -146,14 +144,6 @@ export const Predict = () => {
     if (option.value === kabupaten?.value) return;
     setKabupaten(option);
     setKecamatan(null);
-  };
-
-  const reset = () => {
-    setProvinsi(null);
-    setKabupaten(null);
-    setKecamatan(null);
-    setGender("");
-    setBirthDate("");
   };
 
   const randomize = async () => {
@@ -185,19 +175,16 @@ export const Predict = () => {
     <div className="flex flex-col gap-6">
       <section
         aria-labelledby="preview-heading"
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-2"
       >
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-          <h2 id="preview-heading" className="text-sm font-medium">
-            Pratinjau NIK
+        <div className="flex items-center justify-between gap-3">
+          <h2
+            id="preview-heading"
+            className="text-sm font-medium text-muted-foreground"
+          >
+            Hasil
           </h2>
-          <div className="flex flex-wrap items-center gap-1">
-            {isTouched && (
-              <Button type="button" variant="ghost" size="sm" onClick={reset}>
-                <RotateCcwIcon aria-hidden="true" />
-                Kosongkan
-              </Button>
-            )}
+          <div className="flex items-center gap-1">
             {isComplete && <CopyPattern digits={digits} />}
             <Button
               type="button"
@@ -215,13 +202,25 @@ export const Predict = () => {
             </Button>
           </div>
         </div>
-        <NikReadout digits={digits} label={describeDigits(digits)} />
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          {isComplete
-            ? "Contoh NIK lengkap. "
-            : "Pilih wilayah, jenis kelamin dan tanggal lahir di bawah. "}
-          4 digit terakhir (<span className="font-mono">xxxx</span>) adalah
-          nomor urut dari Dukcapil, jadi tidak bisa ditebak.
+        <p className="break-all font-mono text-2xl font-medium tracking-wider sm:text-3xl">
+          <span aria-hidden="true">
+            {digits.split("").map((char, index) => (
+              <span
+                // The preview is fixed-length and never reorders.
+                // biome-ignore lint/suspicious/noArrayIndexKey: position is the identity
+                key={index}
+                className={
+                  /\d/.test(char) ? undefined : "text-muted-foreground/60"
+                }
+              >
+                {char === UNKNOWN ? "·" : char}
+              </span>
+            ))}
+          </span>
+          <span className="sr-only">{describeDigits(digits)}</span>
+        </p>
+        <p className="text-sm text-muted-foreground">
+          4 digit terakhir tidak bisa ditebak.
         </p>
       </section>
 
@@ -338,7 +337,7 @@ const CopyPattern = ({ digits }: { digits: string }) => {
             ? "Tersalin"
             : state === "failed"
               ? "Gagal menyalin"
-              : "Salin pola"}
+              : "Salin"}
         </span>
       </Button>
       <span role="status" className="sr-only">

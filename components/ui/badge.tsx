@@ -15,9 +15,6 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
-        // Digits from one NIK segment, tinted by the nearest data-seg.
-        segment:
-          "border-seg/40 bg-seg/10 font-mono font-medium tracking-wider text-foreground",
       },
     },
     defaultVariants: {
