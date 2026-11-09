@@ -3,6 +3,9 @@ module.exports = {
   // Light theme only. `dark:` variants never activate from the OS setting; the
   // `dark` class is only used to scope a dark surface (the result panel).
   darkMode: "class",
+  // `hover:` only applies where the pointer can hover, so a tap on a phone
+  // doesn't leave a button stuck in its hover state.
+  future: { hoverOnlyWhenSupported: true },
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -80,10 +83,27 @@ module.exports = {
           from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        fade: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        // A result row arriving: shorter rise than fade-in, it's one of six.
+        "row-in": {
+          from: { opacity: "0", transform: "translateY(4px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // A button label swapping state (Salin hasil -> Tersalin).
+        "swap-in": {
+          from: { opacity: "0", transform: "scale(0.9)", filter: "blur(2px)" },
+          to: { opacity: "1", transform: "scale(1)", filter: "blur(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.28s var(--ease-out) both",
         "fade-up": "fade-up 0.5s var(--ease-out) both",
+        fade: "fade var(--duration-base) var(--ease-out) both",
+        "row-in": "row-in var(--duration-base) var(--ease-out) both",
+        "swap-in": "swap-in var(--duration-fast) var(--ease-out) both",
       },
     },
   },
