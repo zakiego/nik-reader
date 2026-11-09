@@ -1,4 +1,3 @@
-import { ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { BrandMark } from "~/components/site/BrandMark";
 import { Separator } from "~/components/ui/separator";
@@ -24,14 +23,7 @@ export const Footer = () => {
             <BrandMark className="size-7" />
             <span className="text-sm font-semibold">NIK Reader</span>
           </Link>
-          <p className="flex items-start gap-2 text-sm leading-relaxed text-muted-foreground">
-            <ShieldCheckIcon
-              aria-hidden="true"
-              className="mt-0.5 size-4 shrink-0 text-success"
-            />
-            NIK dibaca di browser kamu dan tidak disimpan. Untuk keperluan
-            edukasi dan pengujian.
-          </p>
+          <p className="text-sm text-muted-foreground">NIK tidak disimpan.</p>
         </div>
 
         <nav aria-label="Peta situs">

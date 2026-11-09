@@ -68,7 +68,7 @@ export default function NikGenerator() {
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
         <PageHero
           title={meta.h1}
-          lead="Pilih wilayah, jenis kelamin, dan tanggal lahir, lalu contoh NIK terbentuk otomatis mengikuti struktur resmi. Untuk keperluan pengujian dan edukasi, bukan data asli."
+          lead="Buat contoh NIK untuk testing. Bukan data asli."
         />
 
         <div className="mt-8">
@@ -76,18 +76,6 @@ export default function NikGenerator() {
             <Predict />
           </ToolPanel>
         </div>
-
-        <ContentSection title="Cara membuat contoh NIK">
-          <ol>
-            <li>Pilih provinsi, kabupaten/kota, dan kecamatan.</li>
-            <li>Pilih jenis kelamin dan isi tanggal lahir.</li>
-            <li>
-              NIK contoh terbentuk otomatis di pratinjau. Tombol Acak mengisi
-              semuanya sekaligus. Empat digit terakhir tetap{" "}
-              <span className="font-mono">xxxx</span> karena tidak bisa ditebak.
-            </li>
-          </ol>
-        </ContentSection>
 
         <ContentSection title="Catatan penting soal contoh NIK">
           <p>

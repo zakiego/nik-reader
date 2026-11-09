@@ -69,7 +69,7 @@ export default function Home() {
         <PageHero
           size="lg"
           title={meta.h1}
-          lead="Masukkan 16 digit NIK untuk membaca provinsi, kabupaten/kota, kecamatan, jenis kelamin, dan tanggal lahir. Contoh NIK juga bisa dibuat lewat tab Buat contoh."
+          lead="Lihat provinsi, kota, kecamatan, jenis kelamin, dan tanggal lahir dari NIK."
         />
 
         <div className="mt-8">
@@ -77,34 +77,11 @@ export default function Home() {
         </div>
 
         <ContentSection title="Arti 16 digit NIK">
-          <p>
-            Setiap NIK terdiri dari 16 digit yang tidak acak. Angka-angka itu
-            menyimpan kode wilayah, tanggal lahir, jenis kelamin, dan nomor urut
-            pendaftaran. Begini susunannya:
-          </p>
+          <p>16 digit NIK tersusun seperti ini:</p>
           <NikAnatomy />
           <p>
             Penjelasan lengkap tiap bagian ada di panduan{" "}
             <Link href={ROUTES.guide.path}>cara membaca NIK</Link>.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Cara memeriksa NIK">
-          <ol>
-            <li>Buka tab Baca NIK, lalu ketik atau tempel 16 digit NIK.</li>
-            <li>
-              Setiap kotak terisi sesuai bagiannya: kode wilayah, tanggal lahir,
-              lalu nomor urut.
-            </li>
-            <li>
-              Begitu digit ke-16 masuk, hasilnya langsung muncul di bawah kolom.
-              Tombol Baca NIK juga bisa ditekan kapan saja.
-            </li>
-          </ol>
-          <p>
-            Ingin fokus ke tanggal lahir? Lihat halaman{" "}
-            <Link href={ROUTES.birthDate.path}>cek tanggal lahir dari NIK</Link>
-            .
           </p>
         </ContentSection>
 

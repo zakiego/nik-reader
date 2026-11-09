@@ -69,10 +69,7 @@ export default function CaraMembacaNik() {
       />
 
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
-        <PageHero
-          title={meta.h1}
-          lead="Pahami arti setiap bagian dari 16 digit Nomor Induk Kependudukan, dari kode wilayah sampai tanggal lahir dan jenis kelamin."
-        />
+        <PageHero title={meta.h1} lead="Arti tiap bagian dari 16 digit NIK." />
 
         <ContentSection title="Apa itu NIK?">
           <p>

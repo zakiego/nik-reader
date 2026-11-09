@@ -93,7 +93,7 @@ export default function CekTanggalLahirDariNik() {
       <Layout currentPath={meta.path} breadcrumbs={CRUMBS}>
         <PageHero
           title={meta.h1}
-          lead="Masukkan 16 digit NIK untuk membaca tanggal lahir secara otomatis, lengkap dengan aturan +40 untuk perempuan."
+          lead="Lihat tanggal lahir dan jenis kelamin dari NIK."
         />
 
         <div className="mt-8">
