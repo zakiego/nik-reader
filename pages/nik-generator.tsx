@@ -54,6 +54,8 @@ export default function NikGenerator() {
         titleFull={meta.seoTitle}
         description={meta.description}
         path={meta.path}
+        ogImage={meta.ogImage}
+        ogHeading={meta.h1}
       />
       <JsonLd
         data={graph(

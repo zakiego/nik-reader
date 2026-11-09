@@ -22,6 +22,8 @@ export interface RouteMeta {
   navBlurb: string;
   /** Icon shown next to related-page links (resolved in the UI layer). */
   iconKey: IconKey;
+  /** Open Graph card, built by scripts/og/generate.sh. */
+  ogImage: string;
   /** Sitemap hints. */
   priority: number;
   changefreq: "daily" | "weekly" | "monthly";
@@ -38,6 +40,7 @@ export const ROUTES = {
     navShort: "Cek NIK",
     navBlurb: "Baca & cek detail dari 16 digit NIK KTP.",
     iconKey: "search",
+    ogImage: "/og/home.png",
     priority: 1.0,
     changefreq: "weekly",
   },
@@ -51,6 +54,7 @@ export const ROUTES = {
     navShort: "Tanggal lahir",
     navBlurb: "Lihat tanggal lahir dari NIK, termasuk aturan perempuan.",
     iconKey: "calendar",
+    ogImage: "/og/tanggal-lahir.png",
     priority: 0.9,
     changefreq: "weekly",
   },
@@ -64,6 +68,7 @@ export const ROUTES = {
     navShort: "Generator",
     navBlurb: "Buat contoh NIK acak untuk testing & edukasi.",
     iconKey: "generate",
+    ogImage: "/og/generator.png",
     priority: 0.8,
     changefreq: "weekly",
   },
@@ -77,6 +82,7 @@ export const ROUTES = {
     navShort: "Panduan",
     navBlurb: "Arti tiap bagian dari 16 digit NIK.",
     iconKey: "book",
+    ogImage: "/og/panduan.png",
     priority: 0.7,
     changefreq: "monthly",
   },

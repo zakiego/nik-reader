@@ -1,0 +1,218 @@
+<!doctype html>
+<!--
+  Open Graph card template, 1200x630. Not deployed: scripts/og/generate.sh
+  opens it once per page with ?page=<key> and saves public/og/<key>.png.
+  Colors and fonts mirror styles/globals.css (light theme). Each title is the
+  page's h1 (lib/routes.ts), which components/Seo.tsx reuses as the alt text.
+-->
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Public+Sans:wght@500;600;700&display=block"
+    />
+    <style>
+      :root {
+        --background: #f7f9fc;
+        --card: #ffffff;
+        --foreground: #161f30;
+        --muted: #596475;
+        --input: #8a95a8;
+        --primary: #0850ab;
+        --seg-provinsi: #0850ab;
+        --seg-kabupaten: #237fc8;
+        --seg-kecamatan: #5fabd8;
+        --seg-birth: #df8623;
+        --seg-urut: #9199a5;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family: "Public Sans", sans-serif;
+        padding: 64px 72px;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 32px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .mark {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: var(--primary);
+        display: grid;
+        place-items: center;
+      }
+      .mark svg {
+        width: 32px;
+        height: 32px;
+      }
+      .domain {
+        margin-left: auto;
+        font-size: 32px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      h1 {
+        margin-top: 52px;
+        font-size: 80px;
+        line-height: 1.04;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        text-wrap: balance;
+      }
+      p {
+        margin-top: 18px;
+        max-width: 900px;
+        font-size: 34px;
+        line-height: 1.3;
+        color: var(--muted);
+        text-wrap: balance;
+      }
+      .nik {
+        margin-top: auto;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+      }
+      .seg {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .seg.dim {
+        opacity: 0.3;
+      }
+      .cells {
+        display: flex;
+      }
+      .cell {
+        width: 50px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        border: 2px solid var(--input);
+        border-left-width: 0;
+        background: var(--card);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 34px;
+        font-weight: 500;
+      }
+      .cell:first-child {
+        border-left-width: 2px;
+        border-radius: 8px 0 0 8px;
+      }
+      .cell:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+      .cell.x {
+        color: var(--muted);
+      }
+      .bar {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--seg);
+      }
+      .provinsi { --seg: var(--seg-provinsi); }
+      .kabupaten { --seg: var(--seg-kabupaten); }
+      .kecamatan { --seg: var(--seg-kecamatan); }
+      .birthDate { --seg: var(--seg-birth); }
+      .urut { --seg: var(--seg-urut); }
+      .cell.filled {
+        background: color-mix(in oklab, var(--seg) 12%, white);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M4.5 3.75a3 3 0 00-3 3v10.5a3 3 0 003 3h15a3 3 0 003-3V6.75a3 3 0 00-3-3h-15zm4.125 3a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zm-3.873 8.703a4.126 4.126 0 017.746 0 .75.75 0 01-.351.92 7.47 7.47 0 01-3.522.877 7.47 7.47 0 01-3.522-.877.75.75 0 01-.351-.92zM15 8.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15zM14.25 12a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H15a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H15z"
+          />
+        </svg>
+      </span>
+      NIK Reader
+      <span class="domain">nik.zakiego.com</span>
+    </div>
+    <h1 id="title"></h1>
+    <p id="lead"></p>
+    <div class="nik" id="nik"></div>
+
+    <script>
+      const PAGES = {
+        home: {
+          title: "Baca dan Periksa NIK",
+          lead: "Provinsi, kabupaten/kota, kecamatan, jenis kelamin dan tanggal lahir dari 16 digit NIK.",
+          digits: "3204054501900001",
+        },
+        "tanggal-lahir": {
+          title: "Membaca Tanggal Lahir dari NIK",
+          lead: "Digit ke-7 sampai ke-12, termasuk aturan +40 untuk perempuan.",
+          digits: "3204054501900001",
+          highlight: "birthDate",
+        },
+        generator: {
+          title: "Generator NIK",
+          lead: "Contoh NIK dari wilayah, jenis kelamin dan tanggal lahir. Untuk testing dan edukasi.",
+          digits: "320405450190xxxx",
+        },
+        panduan: {
+          title: "Panduan Membaca NIK",
+          lead: "Arti tiap bagian dari 16 digit Nomor Induk Kependudukan.",
+          digits: "3204054501900001",
+        },
+      };
+      const SEGMENTS = [
+        ["provinsi", 0, 2],
+        ["kabupaten", 2, 4],
+        ["kecamatan", 4, 6],
+        ["birthDate", 6, 12],
+        ["urut", 12, 16],
+      ];
+      const page =
+        PAGES[new URLSearchParams(location.search).get("page")] ?? PAGES.home;
+      document.getElementById("title").textContent = page.title;
+      document.getElementById("lead").textContent = page.lead;
+      const nik = document.getElementById("nik");
+      for (const [key, start, end] of SEGMENTS) {
+        const seg = document.createElement("div");
+        seg.className = `seg ${key}`;
+        if (page.highlight && page.highlight !== key) seg.classList.add("dim");
+        const cells = document.createElement("div");
+        cells.className = "cells";
+        for (const char of page.digits.slice(start, end)) {
+          const cell = document.createElement("div");
+          cell.className = char === "x" ? "cell x" : "cell filled";
+          cell.textContent = char;
+          cells.append(cell);
+        }
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        seg.append(cells, bar);
+        nik.append(seg);
+      }
+    </script>
+  </body>
+</html>
