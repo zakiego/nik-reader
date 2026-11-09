@@ -145,7 +145,7 @@ export const Read = () => {
                       aria-invalid={showError}
                       aria-describedby="nik-hint"
                       readOnly={readNIK.isLoading}
-                      className="tabular h-full pl-4 font-mono text-lg text-foreground tracking-[0.18em] md:text-lg placeholder:font-sans placeholder:tracking-normal"
+                      className="tabular h-full pl-4 font-mono text-base tracking-[0.06em] text-foreground placeholder:font-sans placeholder:tracking-normal min-[360px]:text-lg min-[360px]:tracking-[0.18em] md:text-lg"
                       onChange={(event) => {
                         // Strip spaces and dashes before trimming to 16, so a
                         // pasted "3204 2145 0190 0001" keeps all its digits.
@@ -304,11 +304,11 @@ const ResultCard = ({
       </CardContent>
 
       {hasResult && (
-        <CardFooter className="animate-fade gap-2 border-t px-6 py-4 [animation-delay:80ms] sm:px-7">
+        <CardFooter className="animate-fade flex-col gap-2 border-t px-6 py-4 [animation-delay:80ms] min-[360px]:flex-row sm:px-7">
           <CopyButton nik={nik} data={data} />
           <Button
             variant="ghost"
-            className="h-10 flex-1 sm:flex-none"
+            className="h-10 w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
             onClick={onReset}
           >
             <RotateCcwIcon aria-hidden="true" />
@@ -506,7 +506,7 @@ const CopyButton = ({ nik, data }: { nik: string; data: ExtractedNik }) => {
   return (
     <Button
       variant="secondary"
-      className="h-10 flex-1 sm:flex-none"
+      className="h-10 w-full min-[360px]:w-auto min-[360px]:flex-1 sm:flex-none"
       onClick={copy}
       aria-live="polite"
     >
