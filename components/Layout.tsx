@@ -6,10 +6,8 @@ import { RelatedLinks } from "~/components/content/RelatedLinks";
 import type { Crumb } from "~/lib/structured-data";
 
 /**
- * Shared page shell: navbar, optional breadcrumbs, page content, related-page
- * links, and footer. Navigation to the other pages lives at the bottom (the
- * related-page cards and the footer sitemap), keeping the top of each page,
- * especially the home page, clean.
+ * Shared page shell: header with the site nav, optional breadcrumbs, the page
+ * content, links to the other pages, and the footer.
  */
 export const Layout = ({
   children,
@@ -17,19 +15,25 @@ export const Layout = ({
   breadcrumbs,
 }: {
   children: ReactNode;
-  /** Path of the current page (excluded from the related-links block). */
+  /** Path of the current page (marked in the nav, left out of related links). */
   currentPath: string;
   breadcrumbs?: Crumb[];
-}) => {
-  return (
-    <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
-      <Navbar />
+}) => (
+  <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+    <a
+      href="#isi"
+      className="sr-only rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50"
+    >
+      Langsung ke isi
+    </a>
+    <Navbar currentPath={currentPath} />
+    <main id="isi" className="scroll-mt-4">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} />
       )}
       {children}
       <RelatedLinks currentPath={currentPath} />
-      <Footer />
     </main>
-  );
-};
+    <Footer />
+  </div>
+);

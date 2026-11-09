@@ -1,41 +1,110 @@
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
-import { IdentificationIcon } from "@heroicons/react/24/solid";
+import { GlobeIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { BrandMark } from "~/components/site/BrandMark";
+import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { ALL_ROUTES } from "~/lib/routes";
 import { SITE } from "~/lib/site";
 
-export const Navbar = () => {
-  return (
-    <header className="flex items-center justify-between">
-      <Link
-        href="/"
-        className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-        aria-label="NIK Reader beranda"
-      >
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary-hover text-primary-fg shadow-sm ring-1 ring-black/5">
-          <IdentificationIcon className="h-6 w-6" aria-hidden="true" />
-        </div>
-        <div className="leading-tight">
-          <div className="text-lg font-bold tracking-tight text-content">
-            NIK
-          </div>
-          <div className="text-xs font-medium text-muted-foreground">
-            Reader &amp; Generator
-          </div>
-        </div>
-      </Link>
+export const Navbar = ({ currentPath }: { currentPath: string }) => (
+  <header className="flex h-16 items-center justify-between gap-4">
+    <Link
+      href="/"
+      className="focus-ring -m-1 flex items-center gap-2.5 rounded-lg p-1"
+      aria-label="NIK Reader, beranda"
+    >
+      <BrandMark />
+      <span className="text-[0.9375rem] font-semibold tracking-tight">
+        NIK Reader
+      </span>
+    </Link>
 
-      <a
-        href={SITE.authorUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Kunjungi zakiego.com"
-        title="zakiego.com"
-        data-umami-event="zakiego-click"
-        data-umami-event-location="navbar"
-        className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+    <nav aria-label="Utama" className="hidden items-center gap-1 sm:flex">
+      <ul className="flex items-center gap-0.5">
+        {ALL_ROUTES.map((route) => {
+          const current = route.path === currentPath;
+          return (
+            <li key={route.path}>
+              <Button variant="nav" size="sm" asChild>
+                <Link
+                  href={route.path}
+                  aria-current={current ? "page" : undefined}
+                >
+                  {route.navShort}
+                </Link>
+              </Button>
+            </li>
+          );
+        })}
+      </ul>
+      <Button
+        variant="ghost"
+        size="icon"
+        asChild
+        className="ml-1 text-muted-foreground"
       >
-        <GlobeAltIcon className="h-5 w-5" aria-hidden="true" />
-      </a>
-    </header>
-  );
-};
+        <a
+          href={SITE.authorUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Kunjungi zakiego.com"
+          title="zakiego.com"
+          data-umami-event="zakiego-click"
+          data-umami-event-location="navbar"
+        >
+          <GlobeIcon aria-hidden="true" />
+        </a>
+      </Button>
+    </nav>
+
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="-mr-2 size-11 sm:hidden"
+          aria-label="Buka menu"
+        >
+          <MenuIcon aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={4} className="w-56">
+        <DropdownMenuGroup>
+          {ALL_ROUTES.map((route) => (
+            <DropdownMenuItem key={route.path} asChild>
+              <Link
+                href={route.path}
+                aria-current={route.path === currentPath ? "page" : undefined}
+                className="aria-[current=page]:font-medium"
+              >
+                {route.navLabel}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <a
+              href={SITE.authorUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-umami-event="zakiego-click"
+              data-umami-event-location="navbar"
+            >
+              <GlobeIcon aria-hidden="true" />
+              zakiego.com
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </header>
+);

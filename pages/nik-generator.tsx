@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { JsonLd } from "~/components/JsonLd";
 import { Layout } from "~/components/Layout";
+import { ToolPanel } from "~/components/NikTool";
 import { Seo } from "~/components/Seo";
 import { ContentSection } from "~/components/content/ContentSection";
 import { Faq } from "~/components/content/Faq";
@@ -66,21 +67,22 @@ export default function NikGenerator() {
         <PageHero
           title={meta.h1}
           lead="Pilih wilayah, jenis kelamin, dan tanggal lahir, lalu contoh NIK terbentuk otomatis mengikuti struktur resmi. Untuk keperluan pengujian dan edukasi, bukan data asli."
-          className="mt-5"
         />
 
         <div className="mt-8">
-          <Predict />
+          <ToolPanel>
+            <Predict />
+          </ToolPanel>
         </div>
 
         <ContentSection title="Cara membuat contoh NIK">
-          <ol className="list-decimal space-y-2 pl-5 marker:font-medium marker:text-faint">
+          <ol>
             <li>Pilih provinsi, kabupaten/kota, dan kecamatan.</li>
             <li>Pilih jenis kelamin dan isi tanggal lahir.</li>
             <li>
-              NIK contoh terbentuk otomatis di kartu pratinjau. Empat digit
-              terakhir tetap <span className="font-mono">xxxx</span> karena
-              tidak bisa ditebak.
+              NIK contoh terbentuk otomatis di pratinjau. Tombol Acak mengisi
+              semuanya sekaligus. Empat digit terakhir tetap{" "}
+              <span className="font-mono">xxxx</span> karena tidak bisa ditebak.
             </li>
           </ol>
         </ContentSection>
@@ -90,7 +92,7 @@ export default function NikGenerator() {
             Contoh NIK di sini hanya meniru pola angka, bukan nomor yang benar-
             benar terdaftar. Gunakan dengan bijak:
           </p>
-          <ul className="list-disc space-y-1.5 pl-5 marker:text-faint">
+          <ul>
             <li>Cocok untuk data dummy, testing form, dan bahan belajar.</li>
             <li>
               Bukan pengganti NIK asli dan tidak akan lolos verifikasi resmi.
@@ -101,20 +103,8 @@ export default function NikGenerator() {
           </ul>
           <p>
             Penasaran cara kerja tiap digit? Baca panduan{" "}
-            <Link
-              href={ROUTES.guide.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cara membaca NIK
-            </Link>{" "}
-            atau{" "}
-            <Link
-              href={ROUTES.home.path}
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-            >
-              cek NIK yang sudah ada
-            </Link>
-            .
+            <Link href={ROUTES.guide.path}>cara membaca NIK</Link> atau{" "}
+            <Link href={ROUTES.home.path}>cek NIK yang sudah ada</Link>.
           </p>
         </ContentSection>
 

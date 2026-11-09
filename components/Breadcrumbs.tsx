@@ -1,41 +1,36 @@
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { Fragment } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "~/components/ui/breadcrumb";
 import type { Crumb } from "~/lib/structured-data";
 
 /**
  * Visible breadcrumb trail for sub-pages. The matching BreadcrumbList JSON-LD is
  * emitted separately by each page (see lib/structured-data).
  */
-export const Breadcrumbs = ({ items }: { items: Crumb[] }) => {
-  return (
-    <nav aria-label="Breadcrumb" className="mt-6">
-      <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-        {items.map((item, i) => {
-          const isLast = i === items.length - 1;
-          return (
-            <li key={item.path} className="flex items-center gap-1">
-              {isLast ? (
-                <span aria-current="page" className="font-medium text-content">
-                  {item.name}
-                </span>
-              ) : (
-                <>
-                  <Link
-                    href={item.path}
-                    className="rounded transition-colors hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  >
-                    {item.name}
-                  </Link>
-                  <ChevronRightIcon
-                    className="h-3.5 w-3.5 shrink-0 text-faint"
-                    aria-hidden="true"
-                  />
-                </>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-};
+export const Breadcrumbs = ({ items }: { items: Crumb[] }) => (
+  <Breadcrumb className="mt-4">
+    <BreadcrumbList>
+      {items.map((item, i) => (
+        <Fragment key={item.path}>
+          {i > 0 && <BreadcrumbSeparator />}
+          <BreadcrumbItem>
+            {i === items.length - 1 ? (
+              <BreadcrumbPage>{item.name}</BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink asChild>
+                <Link href={item.path}>{item.name}</Link>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        </Fragment>
+      ))}
+    </BreadcrumbList>
+  </Breadcrumb>
+);

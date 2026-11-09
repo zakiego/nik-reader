@@ -1,62 +1,31 @@
 import type { ReactNode } from "react";
+import { cn } from "~/lib/utils";
 
-/**
- * Page hero holding the single <h1>, an optional kicker, a lead paragraph, and
- * optional slot content (trust chips, CTA). Parts fade up in a short stagger so
- * the page assembles top-to-bottom instead of popping in at once.
- */
+/** Page hero holding the single <h1> and a lead paragraph. */
 export const PageHero = ({
-  kicker,
   title,
   lead,
-  children,
   size = "md",
-  className = "mt-8",
+  className,
 }: {
-  kicker?: string;
   title: string;
   lead: ReactNode;
-  children?: ReactNode;
   size?: "md" | "lg";
   className?: string;
-}) => {
-  const headingSize =
-    size === "lg"
-      ? "text-[1.875rem] leading-[1.1] sm:text-[2.5rem] sm:leading-[1.05]"
-      : "text-[1.625rem] leading-[1.15] sm:text-[2rem] sm:leading-[1.1]";
-
-  return (
-    <div className={className}>
-      {kicker && (
-        <p
-          className="animate-fade-up text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground"
-          style={{ animationDelay: "40ms" }}
-        >
-          {kicker}
-        </p>
+}) => (
+  <div className={cn("mt-8 sm:mt-12", className)}>
+    <h1
+      className={cn(
+        "text-balance font-bold tracking-[-0.025em]",
+        size === "lg"
+          ? "text-[2.125rem] leading-[1.08] sm:text-5xl sm:leading-[1.04]"
+          : "text-[1.875rem] leading-[1.12] sm:text-[2.5rem] sm:leading-[1.08]",
       )}
-      <h1
-        className={`animate-fade-up text-balance font-bold tracking-tight text-content ${headingSize} ${
-          kicker ? "mt-2.5" : ""
-        }`}
-        style={{ animationDelay: "80ms" }}
-      >
-        {title}
-      </h1>
-      <p
-        className="animate-fade-up mt-3 text-pretty text-[15px] leading-relaxed text-muted-foreground sm:text-base"
-        style={{ animationDelay: "140ms" }}
-      >
-        {lead}
-      </p>
-      {children && (
-        <div
-          className="animate-fade-up mt-5"
-          style={{ animationDelay: "200ms" }}
-        >
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};
+    >
+      {title}
+    </h1>
+    <p className="mt-4 max-w-[58ch] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+      {lead}
+    </p>
+  </div>
+);
