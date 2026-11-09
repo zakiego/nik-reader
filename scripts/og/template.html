@@ -2,7 +2,7 @@
 <!--
   Open Graph card template, 1200x630. Not deployed: scripts/og/generate.sh
   opens it once per page with ?page=<key> and saves public/og/<key>.png.
-  Colors and fonts mirror styles/globals.css (light theme). Each title is the
+  Colors and fonts mirror styles/globals.css (light theme, mono). Each title is the
   page's h1 (lib/routes.ts), which components/Seo.tsx reuses as the alt text.
 -->
 <html lang="id">
@@ -16,17 +16,10 @@
     />
     <style>
       :root {
-        --background: #f7f9fc;
-        --card: #ffffff;
-        --foreground: #161f30;
-        --muted: #596475;
-        --input: #8a95a8;
-        --primary: #0850ab;
-        --seg-provinsi: #0850ab;
-        --seg-kabupaten: #237fc8;
-        --seg-kecamatan: #5fabd8;
-        --seg-birth: #df8623;
-        --seg-urut: #9199a5;
+        --background: #fafaf9;
+        --foreground: #1c1917;
+        --muted: #78716c;
+        --border: #e7e5e4;
       }
       * {
         box-sizing: border-box;
@@ -58,7 +51,7 @@
         width: 52px;
         height: 52px;
         border-radius: 16px;
-        background: var(--primary);
+        background: var(--foreground);
         display: grid;
         place-items: center;
       }
@@ -90,55 +83,15 @@
       }
       .nik {
         margin-top: auto;
-        display: flex;
-        gap: 18px;
-        align-items: flex-start;
-      }
-      .seg {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .seg.dim {
-        opacity: 0.3;
-      }
-      .cells {
-        display: flex;
-      }
-      .cell {
-        width: 50px;
-        height: 64px;
-        display: grid;
-        place-items: center;
-        border: 2px solid var(--input);
-        border-left-width: 0;
-        background: var(--card);
+        padding-top: 28px;
+        border-top: 2px solid var(--border);
         font-family: "JetBrains Mono", monospace;
-        font-size: 34px;
+        font-size: 56px;
         font-weight: 500;
+        letter-spacing: 0.06em;
       }
-      .cell:first-child {
-        border-left-width: 2px;
-        border-radius: 8px 0 0 8px;
-      }
-      .cell:last-child {
-        border-radius: 0 8px 8px 0;
-      }
-      .cell.x {
+      .nik .x {
         color: var(--muted);
-      }
-      .bar {
-        height: 6px;
-        border-radius: 3px;
-        background: var(--seg);
-      }
-      .provinsi { --seg: var(--seg-provinsi); }
-      .kabupaten { --seg: var(--seg-kabupaten); }
-      .kecamatan { --seg: var(--seg-kecamatan); }
-      .birthDate { --seg: var(--seg-birth); }
-      .urut { --seg: var(--seg-urut); }
-      .cell.filled {
-        background: color-mix(in oklab, var(--seg) 12%, white);
       }
     </style>
   </head>
@@ -171,7 +124,6 @@
           title: "Membaca Tanggal Lahir dari NIK",
           lead: "Digit ke-7 sampai ke-12, termasuk aturan +40 untuk perempuan.",
           digits: "3204054501900001",
-          highlight: "birthDate",
         },
         generator: {
           title: "Generator NIK",
@@ -184,34 +136,16 @@
           digits: "3204054501900001",
         },
       };
-      const SEGMENTS = [
-        ["provinsi", 0, 2],
-        ["kabupaten", 2, 4],
-        ["kecamatan", 4, 6],
-        ["birthDate", 6, 12],
-        ["urut", 12, 16],
-      ];
       const page =
         PAGES[new URLSearchParams(location.search).get("page")] ?? PAGES.home;
       document.getElementById("title").textContent = page.title;
       document.getElementById("lead").textContent = page.lead;
       const nik = document.getElementById("nik");
-      for (const [key, start, end] of SEGMENTS) {
-        const seg = document.createElement("div");
-        seg.className = `seg ${key}`;
-        if (page.highlight && page.highlight !== key) seg.classList.add("dim");
-        const cells = document.createElement("div");
-        cells.className = "cells";
-        for (const char of page.digits.slice(start, end)) {
-          const cell = document.createElement("div");
-          cell.className = char === "x" ? "cell x" : "cell filled";
-          cell.textContent = char;
-          cells.append(cell);
-        }
-        const bar = document.createElement("div");
-        bar.className = "bar";
-        seg.append(cells, bar);
-        nik.append(seg);
+      for (const char of page.digits) {
+        const span = document.createElement("span");
+        if (char === "x") span.className = "x";
+        span.textContent = char;
+        nik.append(span);
       }
     </script>
   </body>
