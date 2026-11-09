@@ -40,7 +40,7 @@ export const Tab: FC<Props> = ({ selectedTab, setSelectedTab }) => {
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold outline-none transition duration-200 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2 ${
               active
                 ? "bg-surface text-content shadow-sm"
-                : "text-muted hover:text-content"
+                : "text-muted-foreground hover:text-content"
             }`}
           >
             <Icon className="h-4 w-4" aria-hidden="true" />

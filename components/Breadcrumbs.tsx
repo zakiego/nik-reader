@@ -9,7 +9,7 @@ import type { Crumb } from "~/lib/structured-data";
 export const Breadcrumbs = ({ items }: { items: Crumb[] }) => {
   return (
     <nav aria-label="Breadcrumb" className="mt-6">
-      <ol className="flex flex-wrap items-center gap-1 text-xs text-muted">
+      <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
           return (

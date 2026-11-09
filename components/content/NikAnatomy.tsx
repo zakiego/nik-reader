@@ -66,7 +66,8 @@ const SEGMENTS: Segment[] = [
 
 export const NikAnatomy = ({ highlight }: { highlight?: SegmentKey }) => {
   return (
-    <div>
+    // The Read tool's result card links here ("Lihat arti tiap digit").
+    <div id="arti-digit-nik" className="scroll-mt-6">
       {/* Readout */}
       <div className="rounded-2xl border border-line bg-surface-2 p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2">
@@ -107,11 +108,11 @@ export const NikAnatomy = ({ highlight }: { highlight?: SegmentKey }) => {
             <div>
               <dt className="text-sm font-semibold text-content">
                 {seg.label}{" "}
-                <span className="tabular font-mono text-xs font-medium text-muted">
+                <span className="tabular font-mono text-xs font-medium text-muted-foreground">
                   ({seg.digits})
                 </span>
               </dt>
-              <dd className="mt-0.5 text-sm leading-relaxed text-muted">
+              <dd className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
                 {seg.meaning}
               </dd>
             </div>

@@ -29,7 +29,7 @@ export const PageHero = ({
     <div className={className}>
       {kicker && (
         <p
-          className="animate-fade-up text-xs font-semibold uppercase tracking-[0.12em] text-muted"
+          className="animate-fade-up text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground"
           style={{ animationDelay: "40ms" }}
         >
           {kicker}
@@ -44,7 +44,7 @@ export const PageHero = ({
         {title}
       </h1>
       <p
-        className="animate-fade-up mt-3 text-pretty text-[15px] leading-relaxed text-muted sm:text-base"
+        className="animate-fade-up mt-3 text-pretty text-[15px] leading-relaxed text-muted-foreground sm:text-base"
         style={{ animationDelay: "140ms" }}
       >
         {lead}

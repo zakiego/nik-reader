@@ -40,7 +40,7 @@ export const Faq = ({
                 aria-hidden="true"
               />
             </summary>
-            <p className="max-w-[62ch] px-4 pb-4 text-sm leading-relaxed text-muted sm:px-5">
+            <p className="max-w-[62ch] px-4 pb-4 text-sm leading-relaxed text-muted-foreground sm:px-5">
               {item.a}
             </p>
           </details>

@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { match } from "ts-pattern";
-import { Combobox } from "~/components/UI";
-import { Input } from "~/components/UI/Input";
+import { Combobox } from "~/components/form";
+import { Input } from "~/components/form/Input";
 import { track } from "~/lib/analytics";
 import { GENDER } from "~/lib/gender";
 import {
@@ -168,7 +168,7 @@ export const Predict = () => {
 
       <div className="mt-8">
         <h3 className="text-sm font-medium text-content">Lengkapi data</h3>
-        <p className="mt-1 text-xs text-muted">
+        <p className="mt-1 text-xs text-muted-foreground">
           NIK terbentuk otomatis dari pilihan di bawah.
         </p>
 

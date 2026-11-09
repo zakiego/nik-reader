@@ -23,7 +23,7 @@ export const ContentSection = ({
       >
         {title}
       </h2>
-      <div className="mt-4 max-w-[62ch] space-y-4 text-[15px] leading-relaxed text-muted">
+      <div className="mt-4 max-w-[62ch] space-y-4 text-[15px] leading-relaxed text-muted-foreground">
         {children}
       </div>
     </section>

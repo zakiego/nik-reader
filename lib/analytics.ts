@@ -15,6 +15,8 @@ type Events = {
   "nik-read": { missing: string };
   /** Reading threw, most likely because the region chunk failed to load. */
   "nik-read-error": { error: string };
+  /** A read result was copied to the clipboard. */
+  "nik-copy": undefined;
   /** The generator preview filled in: region, gender and birth date are set. */
   "nik-generate": undefined;
   /** The home page tool switched tabs. */
