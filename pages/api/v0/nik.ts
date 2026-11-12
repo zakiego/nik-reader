@@ -19,7 +19,7 @@ export default async function handler(req: Request) {
 
   if (!parsed.success) {
     return json(
-      { message: "NIK is not valid, character length must be 16" },
+      { message: "NIK is not valid, it must be a string of 16 digits" },
       400,
     );
   }
