@@ -21,7 +21,6 @@ describe("nikSchema", () => {
   });
 
   it("rejects a NIK sent as a JSON number", () => {
-    // JSON.parse has already rounded this one to ...0124 before validation.
     const body = (raw: string) => nikSchema.safeParse(JSON.parse(raw)).success;
     expect(body('{"nik":9171014101900123}')).toBe(false);
     expect(body('{"nik":3171014101900123}')).toBe(false);
