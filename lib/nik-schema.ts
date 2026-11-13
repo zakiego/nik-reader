@@ -6,7 +6,7 @@ import { NIK_LENGTH } from "~/lib/const";
  * the REST endpoint, and the client-side form so the contract can never drift.
  */
 export const nikSchema = z.object({
-  nik: z.coerce.string().length(NIK_LENGTH),
+  nik: z.string().length(NIK_LENGTH).regex(/^\d+$/),
 });
 
 export type NikInput = z.infer<typeof nikSchema>;
