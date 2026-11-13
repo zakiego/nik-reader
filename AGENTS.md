@@ -21,6 +21,10 @@ Use pnpm (Node 22, see `.node-version`).
 - Tests: `pnpm test` (Vitest)
 - Production build: `pnpm build`
 - Cloudflare build / preview / deploy: `pnpm pages:build`, `pnpm pages:preview`, `pnpm pages:deploy`
+- T3 Code worktree setup: `bash scripts/setup-worktree.sh` (runs when T3 creates a worktree; copies gitignored `.env*` files from the main checkout and installs from the lockfile)
+- T3 Code worktree clean: `bash scripts/clean-worktree.sh` (runs when a thread settles; deletes `node_modules` and `.next` in that worktree, does nothing in the main checkout)
+
+The T3 actions are in `t3.json`. T3 runs a project's saved actions, not the file, so after a change to it, import them again in Settings > Projects > Actions.
 
 Before calling work done, run `pnpm typecheck`, `pnpm check` and `pnpm test`, and `pnpm build` for anything that touches pages or config. Don't run `pnpm build` while `pnpm dev` is running: both write `.next`.
 
