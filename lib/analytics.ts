@@ -46,8 +46,9 @@ declare global {
  * anything shaped like a NIK (16 digits, optionally split by spaces, dots,
  * dashes, `+` or `%20`) in the URL, referrer, title or event data for "[nik]".
  * A NIK stored as a JSON number can't be swapped without breaking the JSON, so
- * that payload is dropped instead. Nothing sends a NIK today; this keeps a
- * future `?nik=` link or a careless event from putting one in Umami.
+ * that payload is dropped instead. The reader keeps the NIK in `?nik=`, but
+ * the tracker drops the query string (`data-exclude-search`), so this only has
+ * to catch a careless event or a NIK that ends up in the path or title.
  *
  * `_document.tsx` inlines it ahead of the tracker, so it's in place before the
  * first page view goes out.

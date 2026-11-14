@@ -24,6 +24,8 @@ export default function Document() {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
         {/* Self-hosted Umami; data-domains keeps localhost and preview deploys out,
+            data-exclude-search drops the query string (the tools keep their input
+            there, so it would leak a partial NIK and log a page view per keystroke),
             and data-before-send strips anything shaped like a NIK from every payload */}
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: a static string from lib/analytics, no user input
@@ -34,6 +36,7 @@ export default function Document() {
           src="https://umami.zakiego.com/stats.js"
           data-website-id="c258ac23-6815-47db-8e01-0dd1e8bd6e10"
           data-domains="nik.zakiego.com"
+          data-exclude-search="true"
           data-before-send="umamiBeforeSend"
         />
       </Head>
