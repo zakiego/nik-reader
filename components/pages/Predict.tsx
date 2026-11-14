@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, CopyIcon, ShuffleIcon } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { RegionCombobox } from "~/components/form/RegionCombobox";
 import { Button } from "~/components/ui/button";
@@ -24,6 +25,7 @@ import {
   loadKecamatanOptions,
   loadProvinsiOptions,
 } from "~/lib/region-client";
+import { getParam, replaceParams } from "~/lib/url-query";
 
 type Gender = (typeof GENDER)[number]["value"];
 
@@ -90,6 +92,12 @@ const describeDigits = (digits: string) =>
     return part;
   }).join(", ")}.`;
 
+const isGender = (value: string | undefined): value is Gender =>
+  GENDER.some((g) => g.value === value);
+
+const isIsoDate = (value: string | undefined): value is string =>
+  !!value && /^\d{4}-\d{2}-\d{2}$/.test(value);
+
 const pick = <T,>(items: T[]) =>
   items[Math.floor(Math.random() * items.length)];
 
@@ -105,6 +113,7 @@ const randomBirthDate = () => {
 };
 
 export const Predict = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [provinsi, setProvinsi] = useState<RegionOption | null>(null);
   const [kabupaten, setKabupaten] = useState<RegionOption | null>(null);
@@ -112,6 +121,8 @@ export const Predict = () => {
   const [gender, setGender] = useState<Gender | "">("");
   const [birthDate, setBirthDate] = useState("");
   const [isRandomizing, setIsRandomizing] = useState(false);
+  // Until the URL has been read, writing state back to it would wipe the link.
+  const [isRestored, setIsRestored] = useState(false);
 
   const provinsiQuery = useQuery(regionQuery.provinsi());
   const kabupatenQuery = useQuery({
@@ -132,6 +143,67 @@ export const Predict = () => {
   useEffect(() => {
     if (isComplete) track("nik-generate");
   }, [isComplete]);
+
+  // A `?region=&gender=&birth=` link fills the form. The region is the
+  // deepest code picked (2, 4 or 6 digits), and each level is looked up in
+  // turn, stopping at the first code that doesn't match.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once, when the query arrives
+  useEffect(() => {
+    if (!router.isReady) return;
+    let cancelled = false;
+    const region = getParam(router, "region")?.replace(/\D/g, "") ?? "";
+    const genderParam = getParam(router, "gender");
+    const birthParam = getParam(router, "birth");
+
+    const restore = async () => {
+      try {
+        const levels = [
+          { length: 2, load: () => regionQuery.provinsi(), set: setProvinsi },
+          {
+            length: 4,
+            load: () => regionQuery.kabupaten(region.slice(0, 2)),
+            set: setKabupaten,
+          },
+          {
+            length: 6,
+            load: () => regionQuery.kecamatan(region.slice(0, 4)),
+            set: setKecamatan,
+          },
+        ];
+        for (const level of levels) {
+          if (region.length < level.length) break;
+          const options = await queryClient.fetchQuery(level.load());
+          const match = options.find(
+            (option) => option.value === region.slice(0, level.length),
+          );
+          if (!match || cancelled) break;
+          level.set(match);
+        }
+      } catch {
+        // The region chunk failed to load; the provinsi field shows the retry.
+      }
+      if (cancelled) return;
+      if (isGender(genderParam)) setGender(genderParam);
+      if (isIsoDate(birthParam)) setBirthDate(birthParam);
+      setIsRestored(true);
+    };
+
+    restore();
+    return () => {
+      cancelled = true;
+    };
+  }, [router.isReady]);
+
+  // The URL mirrors the form, so the page can be bookmarked or shared.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: writes follow the form fields only
+  useEffect(() => {
+    if (!isRestored) return;
+    replaceParams(router, {
+      region: kecamatan?.value ?? kabupaten?.value ?? provinsi?.value ?? null,
+      gender: gender || null,
+      birth: birthDate || null,
+    });
+  }, [isRestored, provinsi, kabupaten, kecamatan, gender, birthDate]);
 
   // Picking a parent region clears the levels under it.
   const chooseProvinsi = (option: RegionOption) => {
