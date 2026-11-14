@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { CheckIcon, CopyIcon, RotateCcwIcon, XIcon } from "lucide-react";
+import { useRouter } from "next/router";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
@@ -22,6 +23,7 @@ import { copyText } from "~/lib/clipboard";
 import { NIK_LENGTH } from "~/lib/const";
 import { type NikInput as NikValues, nikSchema } from "~/lib/nik-schema";
 import { splitNik } from "~/lib/nik-segments";
+import { getParam, replaceParams } from "~/lib/url-query";
 import { cn } from "~/lib/utils";
 import { getBirthDateDetails } from "~/utils/extract";
 import { type ExtractedNik, extractDataFromNIK } from "~/utils/read";
@@ -39,6 +41,7 @@ const onlyDigits = (text: string) =>
   text.replace(/\D/g, "").slice(0, NIK_LENGTH);
 
 export const Read = () => {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const form = useForm<NikValues>({
@@ -121,11 +124,27 @@ export const Read = () => {
     });
     // A result for a different NIK is stale, so drop it.
     if (readNik !== undefined && digits !== readNik) readNIK.reset();
+    replaceParams(router, { nik: digits || null });
   };
+
+  // A `?nik=` link fills the field, and a complete one reads right away
+  // through the effect above. The query is only known once the router is
+  // ready, since these pages are static.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once, when the query arrives
+  useEffect(() => {
+    if (!router.isReady) return;
+    const param = getParam(router, "nik");
+    if (param === undefined) return;
+    const digits = onlyDigits(param);
+    if (digits) form.setValue("nik", digits);
+    // Keep the URL in step with what the field actually shows.
+    if (digits !== param) replaceParams(router, { nik: digits || null });
+  }, [router.isReady]);
 
   const clearAll = () => {
     readNIK.reset();
     form.reset({ nik: "" });
+    replaceParams(router, { nik: null });
     inputRef.current?.focus();
   };
 
